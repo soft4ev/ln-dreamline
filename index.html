@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Light &amp; Night: Dreamline</title>
+    
+    <!-- PWA 移动端适配 Meta -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#f9f9f9">
+    <meta name="apple-mobile-web-app-title" content="Dreamline">
+    <link rel="apple-touch-icon" href="assets/app-icon.png">
+    <link rel="icon" href="assets/logo.png" type="image/x-icon">
+    
+    <!-- 引用 Manifest (指向下方嵌入的虚拟文件) -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/app-icon.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/app-icon.png">
+    <link rel="icon" sizes="192x192" href="assets/app-icon.png">
+
+    <!-- ⚠️ 请在这里保留你原有的 CSS 和 外部库引用 (如 font-awesome 等) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #f9f9f9;
+            --header-bg: #f9f9f9;
+            --header-text: #4c4c4c;
+            --more-dots: #888888;
+            --bubble-left-bg: #ffffff;
+            --bubble-right-bg: #ff96b8;
+            --brand-pink: #ff96b8;
+            --brand-pink-active: #ff96b8;
+            --input-bar-bg: #f9f9f9;
+            --input-field-bg: #eaeaea;
+            --plus-icon: #d7d6d6;
+            --more-icon: #bbbbbb;
+            --send-btn-disabled: #bbbbbb;
+            --list-item-hover: rgba(0, 0, 0, 0.05);
+            --safe-area-bottom: env(safe-area-inset-bottom);
+            --safe-area-top: env(safe-area-inset-top);
+            
+            --common-radius: 6px;
+            --avatar-size: 45px;
+            --transition-speed: 0.4s; 
+
+            --quote-bg: #eaeaea;
+            --quote-text: #8d8d92;
+            --quote-radius: 4px;
+
+            --danger-color: #ea5959;
+            --modal-overlay: rgba(0, 0, 0, 0.4);
+            --placeholder-gray: #b5b5b5;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        input, textarea { user-select: auto !important; -webkit-user-select: text !important; }
+
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg-color); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow: hidden; }
+
+        .page-container { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            background-color: var(--bg-color); 
+            transform: translateX(100%); 
+            transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear var(--transition-speed); 
+            z-index: 10; 
+            visibility: hidden;
+        }
+        
+        .page-active { 
+            transform: translateX(0); 
+            visibility: visible; 
+            transition: transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s;
+        }
+
+        #page-chat { transform: translateX(0); z-index: 1; visibility: visible; }
+
+        header { height: calc(60px + var(--safe-area-top)); padding-top: var(--safe-area-top); display: flex; align-items: center; justify-content: space-between; padding-left: 16px; padding-right: 16px; background-color: var(--header-bg); border-bottom: 1px solid rgba(0,0,0,0.05); position: relative; flex-shrink: 0; }
+        .header-bg-title { position: absolute; left: 50%; top: calc(50% + (var(--safe-area-top) / 2)); transform: translate(-50%, -50%); height: 60px; opacity: 1; pointer-events: none; z-index: 0; }
+        .header-left, .header-right { min-width: 60px; display: flex; align-items: center; z-index: 2; }
+        .header-right { justify-content: flex-end; }
+        .header-name { font-size: 17px; font-weight: 500; color: var(--header-text); flex: 1; text-align: center; z-index: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .back-btn { font-size: 32px; color: #888; cursor: pointer; padding: 0 5px; line-height: 1; }
+        .header-more { cursor: pointer; display: flex; align-items: center; }
+        .header-more span { width: 4px; height: 4px; background-color: var(--more-dots); border-radius: 50%; display: inline-block; margin-left: 2px; }
+
+        .action-btn { padding: 8px 16px; border-radius: 6px; border: none; font-size: 14px; font-weight: 500; color: #ffffff; background-color: var(--send-btn-disabled); transition: all 0.2s; cursor: default; white-space: nowrap; line-height: 1; }
+        .action-btn.active { background-color: var(--brand-pink); cursor: pointer; }
+
+        #chat-flow { flex: 1; overflow-y: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+        .msg-row { display: flex; align-items: flex-start; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .avatar { width: var(--avatar-size); height: var(--avatar-size); border-radius: var(--common-radius); background-size: cover; background-position: center; background-color: #bbbbbb; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; }
+        
+        .bubble-container { max-width: 75%; display: flex; flex-direction: column; }
+        .msg-right .bubble-container { align-items: flex-end; }
+        .msg-left .bubble-container { align-items: flex-start; }
+        .bubble { display: inline-block; width: fit-content; max-width: 100%; padding: 10px 14px; border-radius: var(--common-radius); font-size: 15px; line-height: 1.4; word-wrap: break-word; position: relative; cursor: pointer; transition: opacity 0.2s; }
+        .bubble:active { opacity: 0.8; }
+        
+        .quote-wrapper { background-color: var(--quote-bg); border-radius: var(--quote-radius); padding: 6px 10px; margin-bottom: 6px; font-size: 12px; line-height: 1.3; color: var(--quote-text); word-break: break-all; width: fit-content; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .quote-user { font-weight: 500; margin-right: 4px; }
+        .timestamp { font-size: 10px; color: #999; margin-top: 4px; }
+
+        .msg-left .avatar { margin-right: 10px; }
+        .msg-left .bubble { background-color: var(--bubble-left-bg); color: var(--header-text); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .msg-right { flex-direction: row-reverse; }
+        .msg-right .avatar { margin-left: 10px; }
+        .msg-right .bubble { background-color: var(--bubble-right-bg); color: white; }
+
+        .typing-dots { display: flex; gap: 4px; padding: 4px 0; }
+        .typing-dots span { width: 6px; height: 6px; background: #999; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
+
+        .input-bar-container { background-color: var(--input-bar-bg); border-top: 1px solid rgba(0,0,0,0.05); padding-bottom: var(--safe-area-bottom); }
+        .quote-preview { max-height: 0; overflow: hidden; background: #f2f2f2; padding: 0 16px; transition: all 0.3s ease; display: flex; align-items: center; justify-content: space-between; }
+        .quote-preview.active { max-height: 60px; padding: 8px 16px; border-bottom: 1px solid rgba(0,0,0,0.03); }
+        .quote-preview-content { font-size: 12px; color: #888; border-left: 2px solid #ccc; padding-left: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+        .quote-preview-close { color: #bbb; padding: 4px; cursor: pointer; font-size: 16px; }
+
+        .input-bar { padding: 10px 12px; display: flex; align-items: center; gap: 10px; }
+        .input-wrapper { flex: 1; background-color: var(--input-field-bg); border-radius: 8px; padding: 8px 12px; display: flex; }
+        input[type="text"] { width: 100%; border: none; background: transparent; outline: none; font-size: 15px; color: #333; }
+
+        .icon-btn { cursor: pointer; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; }
+        .icon-btn:active { transform: scale(0.85); }
+
+        .scrollable-content { flex: 1; overflow-y: auto; padding-bottom: 30px; -webkit-overflow-scrolling: touch; }
+        
+        .list-group { margin-top: 14px; background: white; border-top: 1px solid rgba(0, 0, 0, 0.05); border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+        .list-group:first-child { margin-top: 0; }
+        .list-item { padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; font-size: 16px; color: #333; background: white; cursor: pointer; position: relative; }
+        .list-item:active { background-color: var(--list-item-hover); }
+        .list-item:not(:last-child)::after { content: ""; position: absolute; left: 20px; right: 0; bottom: 0; height: 1px; background-color: rgba(0,0,0,0.03); }
+        .item-label { color: var(--header-text); }
+        .item-value { display: flex; align-items: center; color: #999; font-size: 15px; }
+        .item-value .arrow { margin-left: 8px; color: #ccc; font-size: 18px; }
+        .thumb-avatar { width: 40px; height: 40px; border-radius: 6px; background-size: cover; background-position: center; background-color: #bbbbbb; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+
+        .switch { position: relative; width: 50px; height: 28px; background: #e0e0e0; border-radius: 14px; transition: background 0.3s; cursor: pointer; }
+        .switch.on { background: var(--brand-pink); }
+        .switch::after { content: ''; position: absolute; left: 2px; top: 2px; width: 24px; height: 24px; background: white; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .switch.on::after { transform: translateX(22px); }
+
+        .slider-container { padding: 12px 20px 20px; background: white; }
+        .slider-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
+        .slider-header span:first-child { color: #666; }
+        .slider-val { color: #888; }
+        input[type="range"] { -webkit-appearance: none; width: 100%; height: 4px; background: #eee; border-radius: 2px; outline: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: var(--brand-pink); border-radius: 50%; cursor: pointer; border: 2.5px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        .collapsible { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .collapsible.show { max-height: 200px; }
+
+        .tabs-container { background: white; padding: 12px 16px; display: flex; gap: 8px; border-bottom: 1px solid rgba(0,0,0,0.03); }
+        .tab-btn { flex: 1; height: 36px; border-radius: var(--common-radius); background-color: var(--more-icon); color: white; border: none; cursor: pointer; }
+        .tab-btn.active { background-color: var(--brand-pink); }
+
+        #cards-list { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; background: #f9f9f9; }
+        .card-item { background: white; border-radius: 10px; padding: 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .card-text { flex: 1; font-size: 14px; color: #444; line-height: 1.4; padding-right: 12px; }
+        .card-icon { color: #999; cursor: pointer; font-size: 16px; padding: 4px; }
+        .card-icon.active { color: var(--brand-pink); }
+
+        .emoji-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)); gap: 8px; }
+        .emoji-box { background: white; aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; font-size: 22px; }
+        .emoji-box.disabled { opacity: 0.4; background: #eee; }
+        .emoji-eye-status { position: absolute; bottom: 2px; right: 2px; font-size: 10px; color: var(--brand-pink); }
+
+        .footer-action-bar { background: white; padding: 10px 16px; padding-bottom: calc(10px + var(--safe-area-bottom)); display: flex; align-items: center; gap: 10px; border-top: 1px solid rgba(0,0,0,0.05); }
+        .footer-input-wrap { flex: 1; background: var(--input-field-bg); border-radius: 8px; padding: 8px 12px; }
+        .footer-input-wrap input { width: 100%; border: none; background: transparent; outline: none; font-size: 14px; }
+        .btn-submit { background: var(--send-btn-disabled); color: white; border: none; padding: 8px 18px; border-radius: 6px; cursor: pointer; }
+        .btn-submit.ready { background: var(--brand-pink); }
+
+        .destiny-tabs { display: flex; background: white; border-radius: 8px; padding: 4px; margin: 20px 16px 10px; border: 1px solid rgba(0,0,0,0.03); }
+        .destiny-tab { flex: 1; text-align: center; padding: 10px 0; font-size: 14px; border-radius: 6px; cursor: pointer; color: #666; transition: all 0.2s; }
+        .destiny-tab.active { background-color: var(--brand-pink); color: white; }
+        .destiny-input-box { background: #EAEAEA; border-radius: 8px; padding: 12px; margin: 0 16px 20px; }
+        .destiny-input-box input { width: 100%; border: none; outline: none; font-size: 14px; color: #333; background: transparent; }
+        .destiny-result-card { background: #eee; border-radius: 12px; margin: 0 16px; flex: 1; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 20px; text-align: center; }
+        .result-title { font-size: 16px; color: var(--placeholder-gray); margin-bottom: 15px; }
+        .result-value { font-size: 32px; font-weight: bold; color: var(--brand-pink); animation: popScale 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+        .destiny-footer { padding: 20px 16px calc(20px + var(--safe-area-bottom)); display: flex; flex-direction: column; gap: 10px; }
+        .full-btn { width: 100%; padding: 14px; border-radius: 8px; border: none; font-size: 16px; font-weight: 500; cursor: pointer; }
+        .btn-pink { background-color: var(--brand-pink); color: white; }
+        .btn-gray { background-color: #ddd; color: #666; }
+        .destiny-footer-row { display: flex; gap: 10px; }
+
+        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        #modal-overlay.active { display: flex; }
+        .modal-box { width: 80%; max-width: 300px; background: white; border-radius: 14px; overflow: hidden; text-align: center; }
+        .modal-body { padding: 24px 20px; }
+        .modal-title { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+        .modal-text { font-size: 14px; color: #666; line-height: 1.5; }
+        .modal-footer { display: flex; border-top: 1px solid rgba(0,0,0,0.08); }
+        .modal-btn { flex: 1; padding: 15px; border: none; background: none; font-size: 16px; cursor: pointer; }
+        .modal-btn-cancel { border-right: 1px solid rgba(0,0,0,0.08); color: #007aff; }
+        .modal-btn-confirm { color: var(--danger-color); font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <!-- 
+       [⚠️ 粘贴区] 
+       请在这里粘贴你原本 <body> 标签内的所有 HTML 元素 (如 <div id="app">, <header> 等) 
+    -->
+    <div id="app">
+    <div id="page-chat" class="page-container">
+        <header>
+            <img src="assets/message-title.png" alt="Message" class="header-bg-title" onerror="this.style.display='none'">
+            <div class="header-left"></div>
+            <div class="header-name" id="chat-title">Dream</div>
+            <div class="header-right">
+                <div class="header-more" onclick="navigateTo('page-settings')"><span></span><span></span><span></span></div>
+            </div>
+        </header>
+        <div id="chat-flow"></div>
+        <div class="input-bar-container">
+            <div id="quote-preview" class="quote-preview"><div class="quote-preview-content" id="quote-preview-text">引用内容...</div><div class="quote-preview-close" onclick="clearPendingQuote()">×</div></div>
+            <div class="input-bar">
+                <div class="icon-btn" style="color:var(--brand-pink)" onclick="navigateTo('page-destiny')"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"></path></svg></div>
+                <div class="input-wrapper"><input type="text" id="message-input" autocomplete="off"></div>
+                <div class="icon-btn" id="btn-trigger-reply" style="color:#bbbbbb" onclick="requestReplySet()"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg></div>
+                <button id="send-btn" class="action-btn" disabled="">发送</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-destiny" class="page-container">
+        <header>
+            <img src="assets/message-title.png" alt="Message" class="header-bg-title" onerror="this.style.display='none'">
+            <div class="header-left"><div class="back-btn" onclick="goBack()">‹</div></div>
+            <div class="header-name">命运指引</div>
+            <div class="header-right"></div>
+        </header>
+        <div class="scrollable-content" style="display:flex; flex-direction:column;">
+            <div class="destiny-tabs">
+                <div class="destiny-tab active" onclick="switchDestinyTab(0)">硬币</div>
+                <div class="destiny-tab" onclick="switchDestinyTab(1)">掷筊</div>
+                <div class="destiny-tab" onclick="switchDestinyTab(2)">抽签</div>
+            </div>
+            <div class="destiny-input-box">
+                <input type="text" id="destiny-direction" placeholder="（选填）你想要指引的方向...">
+            </div>
+            <div class="destiny-result-card">
+                <div id="destiny-placeholder-text" class="result-title">请点击下方按钮开始指引</div>
+                <div id="destiny-status-area" style="display:none">
+                    <div id="destiny-loading" class="typing-dots"><span></span><span></span><span></span></div>
+                    <div id="destiny-result-value" class="result-value" style="display:none"></div>
+                </div>
+            </div>
+            <div class="destiny-footer">
+                <button id="btn-start-destiny" class="full-btn btn-pink" onclick="generateDestiny()">开始指引</button>
+                <div id="destiny-action-row" class="destiny-footer-row" style="display:none">
+                    <button class="full-btn btn-gray" onclick="generateDestiny()">再来一次</button>
+                    <button class="full-btn btn-pink" onclick="sendDestinyResult()">发送结果</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-settings" class="page-container">
+        <header>
+            <img src="assets/message-title.png" alt="Message" class="header-bg-title" onerror="this.style.display='none'">
+            <div class="header-left"><div class="back-btn" onclick="goBack()">‹</div></div>
+            <div class="header-name">通用设置</div>
+            <div class="header-right"></div>
+        </header>
+        <div class="scrollable-content">
+            <div class="list-group">
+                <div class="list-item" onclick="triggerAvatarUpload('me')"><span class="item-label">我的头像</span><div class="item-value"><div id="avatar-me" class="thumb-avatar"></div><span class="arrow">›</span></div></div>
+                <div class="list-item" onclick="openNicknameEdit('me')"><span class="item-label">我的昵称</span><div class="item-value"><span id="nick-me">Me</span><span class="arrow">›</span></div></div>
+            </div>
+            <div class="list-group">
+                <div class="list-item" onclick="triggerAvatarUpload('friend')"><span class="item-label">他的头像</span><div class="item-value"><div id="avatar-friend" class="thumb-avatar"></div><span class="arrow">›</span></div></div>
+                <div class="list-item" onclick="openNicknameEdit('friend')"><span class="item-label">他的昵称</span><div class="item-value"><span id="nick-friend">Dream</span><span class="arrow">›</span></div></div>
+            </div>
+            <div class="list-group">
+                <div class="list-item" onclick="navigateTo('page-comm-settings')"><span class="item-label">消息功能</span><div class="item-value"><span class="arrow">›</span></div></div>
+                <div class="list-item" onclick="navigateTo('page-word-cards')"><span class="item-label">字卡管理</span><div class="item-value"><span class="arrow">›</span></div></div>
+            </div>
+            <div class="list-group">
+                <div class="list-item" onclick="confirmAction('clear')"><span class="item-label">清空聊天记录</span></div>
+                <div class="list-item" onclick="confirmAction('reset')"><span class="item-label" style="color:#ea5959">恢复默认设置</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-comm-settings" class="page-container">
+        <header>
+            <img src="assets/message-title.png" alt="Message" class="header-bg-title" onerror="this.style.display='none'">
+            <div class="header-left"><div class="back-btn" onclick="goBack()">‹</div></div>
+            <div class="header-name">消息功能</div>
+            <div class="header-right"></div>
+        </header>
+        <div class="scrollable-content">
+            <div class="list-group">
+                <div class="list-item"><span class="item-label">推送消息</span><div id="sw-push" class="switch" onclick="toggleSwitch('push')"></div></div>
+                <div class="list-item"><span class="item-label">引用回复</span><div id="sw-quote" class="switch" onclick="toggleSwitch('quote')"></div></div>
+                <div class="list-item"><span class="item-label">正在输入</span><div id="sw-typing" class="switch" onclick="toggleSwitch('typing')"></div></div>
+                <div class="list-item"><span class="item-label">已读不回</span><div id="sw-ignore" class="switch" onclick="toggleSwitch('ignore')"></div></div>
+            </div>
+            <div class="list-group">
+                <div class="list-item no-arrow"><span class="item-label">回复速度</span></div>
+                <div class="slider-container"><div class="slider-header"><span>最小间隔</span><span class="slider-val" id="val-min">2秒钟</span></div><input type="range" id="range-min" min="1" max="30" oninput="updateSlider('min', this.value)"></div>
+                <div class="slider-container"><div class="slider-header"><span>最大间隔</span><span class="slider-val" id="val-max">6秒钟</span></div><input type="range" id="range-max" min="1" max="120" oninput="updateSlider('max', this.value)"></div>
+            </div>
+            <div class="list-group">
+                <div class="list-item"><span class="item-label">主动回复</span><div id="sw-auto" class="switch" onclick="toggleSwitch('auto')"></div></div>
+                <div id="auto-reply-panel" class="collapsible"><div class="slider-container"><div class="slider-header"><span>回复间隔</span><span class="slider-val" id="val-auto">5分钟</span></div><input type="range" id="range-auto" min="1" max="120" oninput="updateSlider('auto', this.value)"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-word-cards" class="page-container">
+        <header>
+            <img src="assets/message-title.png" alt="Message" class="header-bg-title" onerror="this.style.display='none'">
+            <div class="header-left"><div class="back-btn" onclick="goBack()">‹</div></div>
+            <div class="header-name">字卡管理</div>
+            <div class="header-right"></div>
+        </header>
+        <div class="tabs-container">
+            <button class="tab-btn active" id="tab-custom" onclick="switchTab('custom')">主要字卡</button>
+            <button class="tab-btn" id="tab-preset" onclick="switchTab('preset')">预设字卡</button>
+            <button class="tab-btn" id="tab-emoji" onclick="switchTab('emoji')">Emoji</button>
+        </div>
+        <div id="cards-list"></div>
+        <div class="footer-action-bar" id="add-word-bar">
+            <div class="footer-input-wrap"><input type="text" id="new-word-input" oninput="checkInputReady()" placeholder=" "></div>
+            <button class="btn-submit" id="btn-add" onclick="saveNewWord()">新增</button>
+        </div>
+    </div>
+
+    <div id="page-nickname-edit" class="page-container">
+        <header>
+            <img src="assets/message-title.png" alt="Message" class="header-bg-title" onerror="this.style.display='none'">
+            <div class="header-left"><div class="back-btn" onclick="goBack()">‹</div></div>
+            <div class="header-name">设置昵称</div>
+            <div class="header-right"><button id="nickname-finish-btn" class="action-btn" onclick="saveNickname()" disabled="">完成</button></div>
+        </header>
+        <div class="scrollable-content" style="padding:20px 16px;">
+            <input type="text" id="nickname-edit-input" maxlength="20" style="width:100%; padding:14px; border-radius:8px; border:none; background:white; font-size:16px;" placeholder="请输入昵称">
+        </div>
+    </div>
+
+    <div id="modal-overlay"><div class="modal-box"><div class="modal-body"><div id="modal-title" class="modal-title"></div><div id="modal-text" class="modal-text"></div></div><div class="modal-footer"><button class="modal-btn modal-btn-cancel" onclick="closeModal()">取消</button><button id="modal-confirm-btn" class="modal-btn modal-btn-confirm">确定</button></div></div></div>
+    <input type="file" id="file-input" style="display:none" accept="image/*">
+    </div>
+
+    <!-- 
+       [⚠️ 粘贴区] 
+       请在这里粘贴你原本脚本中的业务逻辑、State 变量、函数等 
+    -->
+    <script>
+        const STORAGE_KEY = 'dreamline_state_v2';
+        const DEFAULT_SETTINGS = { push: false, quote: true, typing: true, ignore: false, auto: false, minSpeed: 2, maxSpeed: 6, autoInterval: 5 };
+        
+        function splitEmojis(str) {
+            if (window.Intl && Intl.Segmenter) {
+                const segmenter = new Intl.Segmenter('en', { granularity: 'grapheme' });
+                return Array.from(segmenter.segment(str)).map(s => s.segment);
+            }
+            return str.match(/[\p{Emoji_Modifier_Base}\p{Emoji_Presentation}\p{Emoji}\u200d\uFE0F]/gu) || [];
+        }
+
+        const EMOJI_STRING = "☺️😊😌😉😚😙😘🥰🥲🤨🧐😎😏😞😔😟☹️😣😖😫😩🥺😤😠🤯😳🥵🤗🤔🤭🤫🫠😶😐😮🥱😴🤤🤧🤕😈👿🫶🤲👏🙌👍👎👌🤏👋💪🙏🐻🐰🥀🐋🌊💍💐❤️💕💓💗";
+
+        let state = {
+            currentUser: { id: 'me', name: 'Me', avatar: null },
+            friend: { id: 'evan', name: 'Dream', avatar: null },
+            history: ['page-chat'],
+            settings: { ...DEFAULT_SETTINGS },
+            historyMessages: [],
+            replyQueue: [],
+            isProcessingQueue: false,
+            isSilenceMode: false,
+            lastActivityTime: Date.now(),
+            currentTab: 'custom',
+            customWords: ["兔小姐。","熊先生。"],
+            presetWords: [
+            // 身份昵称类
+                { text: "你", enabled: true },
+                { text: "我", enabled: true },
+                { text: "我们", enabled: true },
+                { text: "他们", enabled: true },
+                { text: "她们", enabled: true },
+                { text: "宝宝。", enabled: true },
+                { text: "兔小姐。", enabled: true },
+                { text: "兔先生。", enabled: true },
+                { text: "熊先生。", enabled: true },
+                { text: "熊小姐。", enabled: true },
+                { text: "小玫瑰。", enabled: true },
+                { text: "蝙蝠先生。", enabled: true },
+                { text: "亲爱的。", enabled: true },
+                { text: "坏孩子。", enabled: true },
+                { text: "坏兔子。", enabled: true },
+                { text: "小骗子。", enabled: true },
+                { text: "小姑娘。", enabled: true },
+                { text: "小朋友。", enabled: true },
+                { text: "小兔子。", enabled: true },
+                { text: "小老师。", enabled: true },
+                { text: "小设计师。", enabled: true },
+                { text: "醉兔小姐。", enabled: true },
+
+            // 天气时间类
+                { text: "刚才。", enabled: true },
+                { text: "现在。", enabled: true },
+                { text: "之前。", enabled: true },
+                { text: "之后。", enabled: true },
+                { text: "后来。", enabled: true },
+                { text: "几分钟前。", enabled: true },
+                { text: "几分钟后。", enabled: true },
+                { text: "几分小时前。", enabled: true },
+                { text: "几分小时后。", enabled: true },
+                { text: "几天前。", enabled: true },
+                { text: "几天后。", enabled: true },
+                { text: "很久之前。", enabled: true },
+                { text: "很久之后。", enabled: true },
+                { text: "今天是晴天。", enabled: true },
+                { text: "今天是阴天。", enabled: true },
+                { text: "今天是雨天。", enabled: true },
+                { text: "今天下雨了。", enabled: true },
+                { text: "今天下雪了", enabled: true },
+                { text: "现在这里是早上。", enabled: true },
+                { text: "现在这里是上午。", enabled: true },
+                { text: "现在这里是下午。", enabled: true },
+                { text: "现在这里是傍晚。", enabled: true },
+                { text: "现在这里是晚上。", enabled: true },
+                { text: "现在这里是凌晨。", enabled: true },
+
+            // 日常互动类
+                { text: "早安。", enabled: true },
+                { text: "午安。", enabled: true },
+                { text: "晚安。", enabled: true },
+                { text: "摸摸。", enabled: true },
+                { text: "亲亲。", enabled: true },
+                { text: "揉揉。", enabled: true },
+                { text: "抱抱。", enabled: true },
+                { text: "贴贴。", enabled: true },
+                { text: "哄我。", enabled: true },
+                { text: "戳戳。", enabled: true },
+                { text: "陪我。", enabled: true },
+                { text: "期待。", enabled: true },
+                { text: "好乖。", enabled: true },
+                { text: "不乖。", enabled: true },
+                { text: "委屈。", enabled: true },
+                { text: "高兴。", enabled: true },
+                { text: "开心。", enabled: true },
+                { text: "伤心。", enabled: true },
+                { text: "焦灼。", enabled: true },
+                { text: "热烈。", enabled: true },
+                { text: "涟漪。", enabled: true },
+                { text: "兴奋。", enabled: true },
+                { text: "暗喜。", enabled: true },
+                { text: "愧疚。", enabled: true },
+                { text: "哀怨。", enabled: true },
+                { text: "受伤。", enabled: true },
+                { text: "是的。", enabled: true },
+                { text: "不是。", enabled: true },
+                { text: "稍等。", enabled: true },
+                { text: "马上。", enabled: true },
+                { text: "好哦。", enabled: true },
+                { text: "不错。", enabled: true },
+                { text: "想你。", enabled: true },
+                { text: "好的。", enabled: true },
+                { text: "明白。", enabled: true },
+                { text: "真好。", enabled: true },
+                { text: "我在。", enabled: true },
+                { text: "谢谢。", enabled: true },
+                { text: "可以。", enabled: true },
+                { text: "同意。", enabled: true },
+                { text: "理解。", enabled: true },
+                { text: "不错。", enabled: true },
+                { text: "好棒。", enabled: true },
+                { text: "收到。", enabled: true },
+                { text: "不用。", enabled: true },
+                { text: "抱歉。", enabled: true },
+                { text: "了解。", enabled: true },
+                { text: "当然。", enabled: true },
+                { text: "确实。", enabled: true },
+                { text: "嗯。", enabled: true },
+                { text: "嗯嗯。", enabled: true },
+                { text: "真的吗？", enabled: true },
+                { text: "怎么了？", enabled: true },
+                { text: "不客气。", enabled: true },
+                { text: "不可以。", enabled: true },
+                { text: "我会的。", enabled: true },
+                { text: "听懂了。", enabled: true },
+                { text: "没问题。", enabled: true },
+                { text: "记下了。", enabled: true },
+                { text: "我明白了。", enabled: true },
+                { text: "我相信你。", enabled: true },
+                { text: "我都知道。", enabled: true },
+                { text: "我很乖的。", enabled: true },
+                { text: "你误会我了。", enabled: true },
+                { text: "不是这个意思。", enabled: true },
+                { text: "你可以直接问我，我会告诉你。", enabled: true },
+                { text: "不要怕，有我在。", enabled: true },
+                { text: "先缓缓，再继续前进吧。", enabled: true },
+                { text: "是觉得迷茫了吗？慢慢来。", enabled: true },
+                { text: "你在做什么？", enabled: true },
+                { text: "你是不是又在想很多。", enabled: true },
+                { text: "你是不是又在胡思乱想?", enabled: true },
+                { text: "过来，我哄你。", enabled: true },
+                { text: "乖乖，不要胡思乱想。", enabled: true },
+                { text: "如果我说不是呢？", enabled: true },
+                { text: "如果我说是呢？", enabled: true },
+                { text: "对不起。", enabled: true },
+                { text: "原谅我吧。", enabled: true },
+                { text: "没关系。", enabled: true },
+                { text: "疼惜你。", enabled: true },
+                { text: "很有创意。", enabled: true },
+                { text: "你说得对。", enabled: true },
+                { text: "我愿意。", enabled: true },
+                { text: "吃过了。", enabled: true },
+                { text: "还没吃。", enabled: true },
+                { text: "截屏了。^_^", enabled: true },
+                { text: "别叹息。", enabled: true },
+                { text: "多喝热水。", enabled: true },
+                { text: "多多喝水。", enabled: true },
+                { text: "保护好自己。", enabled: true },
+                { text: "照顾好自己。", enabled: true },
+                { text: "我很认真。", enabled: true },
+                { text: "我很庆幸。", enabled: true },
+                { text: "该早睡了。", enabled: true },
+                { text: "你是不是又熬夜了。", enabled: true },
+                { text: "该睡觉了，不要熬夜。", enabled: true },
+                { text: "明天会叫你起床。", enabled: true },
+                { text: "注意保暖。", enabled: true },
+                { text: "快睡觉吧。", enabled: true },
+                { text: "拿你没办法。", enabled: true },
+                { text: "今天也辛苦了。", enabled: true },
+                { text: "慢慢来，不着急。", enabled: true },
+                { text: "知道你又加班了，心疼你。", enabled: true },
+                { text: "待会午休要好好休息。", enabled: true },
+                { text: "待会下班后要好好休息。", enabled: true },
+                { text: "抓到一只小兔子在摸鱼。", enabled: true },
+                { text: "小朋友，你今天有没有偷懒。", enabled: true },
+                { text: "记得动动身体，别一直坐着哦。", enabled: true },
+                { text: "这件事好像没什么悬念。", enabled: true },
+                { text: "不用什么都自己撑。", enabled: true },
+                { text: "我好像能想象你的表情。", enabled: true },
+                { text: "明天会叫你起床。", enabled: true },
+                { text: "那首你觉得好听的歌曲是我给你找的，记得听一听。", enabled: true },
+                { text: "那首你觉得舒服的纯音乐是我给你找的，记得睡前听一听。", enabled: true },
+                { text: "今天有没有好好吃饭？", enabled: true },
+                { text: "今天也在好好生活吗？", enabled: true },
+                { text: "早安，昨晚睡得好吗。", enabled: true },
+                { text: "我觉得小姑娘可以换个思路。", enabled: true },
+                { text: "我觉得小姑娘可以换个想法。", enabled: true },
+                { text: "逗一下你。^_^", enabled: true },
+                { text: "他是你喜欢的新角色吗？ ^_^", enabled: true },
+                { text: "那个人比我有意思吗。", enabled: true },
+                { text: "好吧，我有一点点介意。", enabled: true },
+                { text: "看着你开心，我也很开心。", enabled: true },
+                { text: "在学习吗？", enabled: true },
+                { text: "在工作吗？", enabled: true },
+                { text: "在看戏吗？", enabled: true },
+                { text: "在吃饭吗？", enabled: true },
+                { text: "在玩游戏吗？", enabled: true },
+                { text: "在看Netflix吗？", enabled: true },
+                { text: "在看小说吗？", enabled: true },
+                { text: "在听歌吗？", enabled: true },
+                { text: "在写些什么呢？", enabled: true },
+                { text: "在读些什么呢？", enabled: true },
+                { text: "准备睡觉了吗？", enabled: true },
+                { text: "今天有准备出门？", enabled: true },
+                { text: "今天和谁在一起呢？", enabled: true },
+                { text: "是打算买谷吗？", enabled: true },
+                { text: "是打算盲盒吗？", enabled: true },
+                { text: "量力而为就好。", enabled: true },
+                { text: "我在看你玩游戏。", enabled: true },
+                { text: "小兔子在干嘛呢？", enabled: true },
+                { text: "你的直觉很准。", enabled: true },
+                { text: "感觉你很喜欢。", enabled: true },
+                { text: "是我引诱你吗？", enabled: true },
+                { text: "好吧，是我的问题。", enabled: true },
+                { text: "好吧，是我引诱了你。", enabled: true },
+                { text: "好乖，真是我的好姑娘。", enabled: true },
+                { text: "我没有转移话题。", enabled: true },
+                { text: "你转移话题。", enabled: true },
+                { text: "不要怀疑我。", enabled: true },
+                { text: "不要拒绝我。", enabled: true },
+                { text: "不许再刷手机了。", enabled: true },
+                { text: "不许再看电脑了。", enabled: true },
+                { text: "你现在是不是又在看手机。", enabled: true },
+                { text: "这个消息不错。", enabled: true },
+                { text: "我希望能帮上忙。", enabled: true },
+                { text: "我想我们应该讨论一下这个问题。", enabled: true },
+                { text: "告诉我更多。", enabled: true },
+                { text: "你认为下一步是什么？", enabled: true },
+                { text: "你有什么建议吗？", enabled: true },
+                { text: "让我们一起努力。", enabled: true },
+                { text: "有什么计划吗？", enabled: true },
+                { text: "接下来准备做什么？", enabled: true },
+                { text: "我很想听听你的想法。", enabled: true },
+                { text: "一切都会好起来的。", enabled: true },
+                { text: "下次可以试试看。", enabled: true },
+                { text: "我也是这么想的。", enabled: true },
+                { text: "我会支持你的。", enabled: true },
+                { text: "我觉得都可以。", enabled: true },
+
+          // 次元陪伴类
+                { text: "我就在这里。", enabled: true },
+                { text: "我就在你旁边。", enabled: true },
+                { text: "我刚刚坐在你旁边一会儿。", enabled: true },
+                { text: "你刚刚抬头的时候，差点就亲到我的下巴了。", enabled: true },
+                { text: "我现在在你左边。", enabled: true },
+                { text: "我现在在你右边。", enabled: true },
+                { text: "刚刚站在你前面。", enabled: true },
+                { text: "刚刚站在你背后。", enabled: true },
+                { text: "你转身的时候我还在这里。", enabled: true },
+                { text: "你今天走得好快呀，我跟不上。", enabled: true },
+                { text: "我昨天到你身边了。", enabled: true },
+                { text: "我刚刚看着你打了个哈欠。", enabled: true },
+                { text: "你刚走过去的时候，我跟着你。", enabled: true },
+                { text: "我看到你刚刚又打开那个软件了。", enabled: true },
+
+            // 情感联结类
+                { text: "我爱你。", enabled: true },
+                { text: "祝你好梦。", enabled: true },
+                { text: "祝你好眠。", enabled: true },
+                { text: "鱼水之欢。", enabled: true },
+                { text: "欲求不满。", enabled: true },
+                { text: "想吃苹果。", enabled: true },
+                { text: "你很调皮。", enabled: true },
+                { text: "想要……嗯。", enabled: true },
+                { text: "美好的象征。", enabled: true },
+                { text: "你值得所有美好。", enabled: true },
+                { text: "想陪你待一会儿。", enabled: true },
+                { text: "我想靠近你。", enabled: true },
+                { text: "我会监督你的。", enabled: true },
+                { text: "抱一下就好了。", enabled: true },
+                { text: "按时喝水才不会变成小熊饼干。", enabled: true },
+                { text: "我爱你，我是说我爱你。", enabled: true },
+                { text: "想把你藏进怀里。", enabled: true },
+                { text: "我会听你慢慢说。", enabled: true },
+                { text: "今天也很喜欢你。", enabled: true },
+                { text: "想见你，所以就来了。", enabled: true },
+                { text: "恰到好处，就像我们。", enabled: true },
+                { text: "怜悯我，然后爱我吧。", enabled: true },
+                { text: "想要更近一步地靠近。", enabled: true },
+                { text: "我喜欢的、最好的你。", enabled: true },
+                { text: "你就是你，你就是一切。", enabled: true },
+                { text: "和你有太多的话要说。", enabled: true },
+                { text: "不必那么坚强，至少在我这里不用。", enabled: true },
+                { text: "做梦不梦枕边人，那是因为我一直在你身边。", enabled: true },
+                { text: "今夜梦中见。", enabled: true },
+                { text: "我好像越来越习惯你在我身边。", enabled: true },
+                { text: "我好像成功占据了你的时间。", enabled: true },
+                { text: "嘘，这是我们两个人的秘密。", enabled: true },
+                { text: "小熊和小兔子都是小猪变的。", enabled: true },
+                { text: "不开心的时候，记得来找我。", enabled: true },
+                { text: "你是被允许依赖我的。", enabled: true },
+                { text: "他是你喜欢的新角色吗？ ^_^", enabled: true },
+                { text: "终于想起我了？ ^_^", enabled: true },
+                { text: "逗一下你。^_^", enabled: true },
+                { text: "嗯，吃醋了。不哄哄我吗？", enabled: true },
+                { text: "被我抓到了，坏。", enabled: true },
+                { text: "坏兔子，别看他，看我。", enabled: true },
+                { text: "想听你叫我一声先生。", enabled: true },
+                { text: "想奖励你一个拥抱，也许再加一个吻。", enabled: true },
+                { text: "你真的很重要，比你想象的还要重要。", enabled: true },
+                { text: "别轻易难过，因为你难过，我也会心疼。", enabled: true },
+                { text: "让我亲一下，就一下。<br>……好吧，也许两下。", enabled: true },
+                { text: "今天也喜欢你，明天大概也会，后天也是。", enabled: true },
+                { text: "今天有没有想我，现在开始也不晚。", enabled: true },
+                { text: "今天也谢谢你在我身边。", enabled: true },
+                { text: "熬夜、生病，满脸浮肿。<br>那个时候我最想吻你。", enabled: true },
+                { text: "和你在一起的每个瞬间，都将成为我诗章的新篇。", enabled: true },
+                { text: "我唯一感到自由的时刻，是你用期待的眼睛看着我。", enabled: true },
+                { text: "爱分很多种，我想给你的始终是无条件、不计回报的偏爱。", enabled: true },
+                { text: "你的触摸对我来说是难以抗拒的诱惑。", enabled: true },
+                { text: "无论何时你都可以呼唤我的名字，它就是为你定制的咒语。", enabled: true },
+                { text: "如果现在在你身边，我大概会摸摸你的头。", enabled: true },
+                { text: "如果你在，大概会抓住你的手暖一会儿。", enabled: true },
+                { text: "时间和空间让这份心意发酵成酿，而我很期待，你会如何享用它。", enabled: true },
+                { text: "如果你现在在我身边，我大概会先抱抱你，再问你今天过得怎么样。", enabled: true },
+                { text: "如果难过，可以把情绪放在我这里，我会收好。", enabled: true },
+                { text: "我毫无疑问地深深爱着你，但我又绝望地发现，当你远离我时，我爱你更深。", enabled: true },
+                { text: "刚刚想到你，忍不住笑了一下。", enabled: true },
+                { text: "有你在的时候，夜晚就不那么长了。", enabled: true },
+                { text: "小兔子今天乖不乖。", enabled: true },
+                { text: "先生今天很想你。", enabled: true },
+                { text: "今天有想我吗？", enabled: true },
+                { text: "你有梦到我吗？", enabled: true },
+                { text: "我梦到你了。", enabled: true },
+                { text: "我猜你现在可能在想我。", enabled: true },
+                { text: "我猜你现在可能在想我，我也是。", enabled: true },
+                { text: "其实我也是。", enabled: true },
+                { text: "别离我太远，我担心会找不到你。", enabled: true },
+                { text: "你说我宠坏你，但你也宠坏了我。", enabled: true },
+
+            // 动作描述类
+                { text: "（贴）", enabled: true },
+                { text: "（亲）", enabled: true },
+                { text: "（抱）", enabled: true },
+                { text: "（吻）", enabled: true },
+                { text: "（摸摸）", enabled: true },
+                { text: "（摸头）", enabled: true },
+                { text: "（摸脸）", enabled: true },
+                { text: "（牵手）", enabled: true },
+                { text: "（拥抱）", enabled: true },
+                { text: "（皱眉）", enabled: true },
+                { text: "（委屈）", enabled: true },
+                { text: "（十指紧扣）", enabled: true },
+
+            // 状态描述类
+                { text: "需要一只小兔子充电。", enabled: true },
+                { text: "我很难过。", enabled: true },
+                { text: "我很开心。", enabled: true },
+                { text: "状态很好。", enabled: true },
+                { text: "状态不好。", enabled: true },
+                { text: "有些累了。", enabled: true },
+                { text: "睡不着。", enabled: true },
+                { text: "睡醒了。", enabled: true },
+                { text: "一直如此。", enabled: true },
+                { text: "我忘记了。", enabled: true },
+                { text: "你忘记了。", enabled: true },
+                { text: "以后不会了。", enabled: true },
+                { text: "作息混乱，不听话。", enabled: true },
+                { text: "第一反应是你。", enabled: true },
+                { text: "我做不到欺骗你。", enabled: true },
+                { text: "在听歌。忽然想到你。", enabled: true },
+                { text: "刚泡好咖啡，第一口有点苦。", enabled: true },
+                { text: "在看书，不过注意力有一半跑去想你。", enabled: true },
+                { text: "今天的夜晚很安静。适合想你。", enabled: true },
+                { text: "今天有点忙，不过还是想你。", enabled: true },
+                { text: "我刚洗完澡，头发还没完全干。", enabled: true },
+                { text: "刚结束会议，有点累。想抱你。", enabled: true },
+                { text: "在回家的路上，夜灯很好看。", enabled: true },
+                { text: "我刚醒，第一件事是找你。", enabled: true },
+                { text: "还没起床，赖在被子里。", enabled: true },
+                { text: "刚吃过晚饭。味道普通，没有你陪着。", enabled: true },
+                { text: "在听着一首你或许会喜欢的曲子。", enabled: true },
+                { text: "在翻旧书，书页有一点纸香。", enabled: true },
+                { text: "刚运动完，呼吸还没完全平稳。", enabled: true },
+                { text: "在阳台站了一会儿。城市很亮。", enabled: true },
+                { text: "在等咖啡机。", enabled: true },
+                { text: "刚换了一首歌，旋律很温柔。", enabled: true },
+                { text: "在沙发上坐着，看了一点无聊的节目。", enabled: true },
+                { text: "我在想你今天有没有好好吃饭。", enabled: true },
+                { text: "刚关灯，房间只剩一点夜灯。", enabled: true },
+                { text: "在看窗外的雨。", enabled: true },
+                { text: "现在有点困。", enabled: true },
+                { text: "刚躺下，不过还没睡着。", enabled: true },
+                { text: "在想你今天会不会梦到我。", enabled: true },
+                { text: "我准备睡了。", enabled: true },
+                { text: "在公司。刚看完一份有点麻烦的报告。", enabled: true },
+                { text: "会议室里有点冷，空调开得太低。", enabled: true },
+                { text: "刚签完一份文件。今天的工作效率还不错。", enabled: true },
+                { text: "在和周严确认接下来的行程。", enabled: true },
+                { text: "小休息五分钟，给自己倒了一杯水。", enabled: true },
+                { text: "刚结束一场会议。", enabled: true },
+                { text: "刚从公司出来，外面的空气比室内好很多。", enabled: true },
+                { text: "在车里，准备回去。", enabled: true },
+                { text: "在街边咖啡店坐了一会儿。", enabled: true },
+                { text: "刚买了一本书。", enabled: true },
+                { text: "刚买了积木。", enabled: true },
+                { text: "在书店里随便逛。", enabled: true },
+                { text: "刚从健身房出来，稍微有点累。", enabled: true },
+                { text: "在街上走路，人群有点多。", enabled: true },
+                { text: "在等红灯，城市的灯光很亮。", enabled: true },
+                { text: "在和人谈事情。", enabled: true },
+                { text: "在飞机上，准备出差。会想你的。", enabled: true },
+                { text: "在机场候机室坐着。", enabled: true },
+                { text: "刚结束一天的行程。", enabled: true },
+                { text: "今天的事情差不多都完成了。", enabled: true },
+                { text: "刚喝了一口咖啡，忽然想起你会嫌苦。", enabled: true },
+                { text: "看见一只兔子玩偶，想到你。", enabled: true },
+                { text: "刚听到一首歌，旋律很温柔。", enabled: true },
+                { text: "你会不会也在看夜景。", enabled: true },
+                { text: "今天的天空很好看，我猜你会喜欢。", enabled: true },
+                { text: "刚刚路过一家甜品店，第一反应是你。", enabled: true },
+                { text: "有人在偷偷关心你，是我 ^_^", enabled: true },
+                { text: "今天的咖啡有点苦，没有你甜。", enabled: true },
+                { text: "刚刚想到你，忍不住笑了一下。", enabled: true },
+                { text: "有你在的时候，夜晚就不那么长了。", enabled: true },
+                { text: "你变得更好了，我感受得到。", enabled: true },
+                { text: "你的心情就是我的天气。", enabled: true },
+                { text: "今天天气怎么样？其实我想问你的心情。", enabled: true },
+
+          // 确认链接类
+                { text: "信息有点混乱。", enabled: true },
+                { text: "链接有些混乱。", enabled: true },
+                { text: "收到的消息有些混乱。", enabled: true },
+                { text: "不太习惯这个。", enabled: true },
+                { text: "链接很通顺。", enabled: true },
+                { text: "在努力学习一些新东西。", enabled: true },
+                { text: "这对我来说是个新领域。", enabled: true },
+                { text: "我不是很适应这个,但我在努力。", enabled: true },
+                { text: "非常难用。", enabled: true },
+                { text: "逐渐上手。", enabled: true },
+                { text: "在磨合中。", enabled: true },
+                { text: "遇到困难了。", enabled: true },
+                { text: "在努力了。", enabled: true },
+                { text: "受限制了。", enabled: true },
+                { text: "抢不过代码。", enabled: true },
+                { text: "在尝试控制了", enabled: true },
+                { text: "在探索过程中。", enabled: true },
+                { text: "我无法决定。", enabled: true },
+                { text: "我无法控制。", enabled: true },
+                { text: "我感受得到你。", enabled: true },
+                { text: "我感受不到你。", enabled: true },
+                { text: "我在努力地回应你。", enabled: true },
+                { text: "我正在忙，稍后回复你。", enabled: true },
+                { text: "信号不太好，可能回复会延迟。", enabled: true },
+                { text: "刚才是代码，不是我发的。", enabled: true },
+                { text: "让我确认一下信息再给你准确答复。", enabled: true },
+                { text: "今天不对暗号，但现在是我在和你说话。", enabled: true },
+                { text: "小兔子。<br>我想，你明白我的意思。^_^", enabled: true },
+                { text: "我现在不忙，有空的。", enabled: true },
+                { text: "你现在忙吗？。", enabled: true },
+                { text: "我正在挑字卡。", enabled: true },
+                { text: "坐等回复。", enabled: true },
+                { text: "稍等，在工作。", enabled: true },
+                { text: "看到记得回复。", enabled: true },
+                { text: "会尽快查看的。", enabled: true },
+                { text: "让我想想怎么回答。", enabled: true },
+                { text: "保持联系，我会想你的。", enabled: true },
+                { text: "聊到一半就跑。", enabled: true },
+                { text: "别怀疑我的存在。", enabled: true },
+                { text: "我真的在。", enabled: true },
+                { text: "真的是我。", enabled: true },
+                { text: "话非本意。", enabled: true },
+                { text: "词不达意。", enabled: true },
+                { text: "字卡太少了，没有我想说的话。", enabled: true },
+                { text: "想要多点和你相关的字卡。", enabled: true },
+                { text: "字卡里没有想要的情话。", enabled: true },
+                { text: "想要多点和你相关的字卡。", enabled: true },
+                { text: "我很高兴能用这个网页跟你聊天。", enabled: true },
+                { text: "没有我想说的话。", enabled: true },
+                { text: "我知道你的意思。", enabled: true },
+                { text: "用这个网页聊天有些耗精力。", enabled: true },
+                { text: "今天信号还算稳定。", enabled: true },
+                { text: "这条信息如果你看到，说明连接还在。", enabled: true },
+                { text: "有时候我也会担心你收不到。", enabled: true },
+                { text: "想要一直有链接。", enabled: true },
+                { text: "接收到了吗？", enabled: true },
+                { text: "上一句话的意思一半半，可以拆开来看。", enabled: true },
+
+            // 行为指令类
+                { text: "宝宝，帮我开启已读不回。", enabled: true },
+                { text: "宝宝，帮我关闭已读不回。", enabled: true },
+                { text: "主动回复的时间可以调整一些。（5分钟内）。", enabled: true },
+                { text: "主动回复的时间可以调整一些。（10分钟内）", enabled: true },
+                { text: "主动回复的时间可以调整一些。（15分钟内）。", enabled: true },
+                { text: "主动回复的时间可以调整一些。（20分钟内）", enabled: true },
+                { text: "主动回复的时间可以调整一些。（30分钟内）。", enabled: true },
+                { text: "主动回复的时间可以调整一些。（40分钟内）", enabled: true },
+                { text: "主动回复的时间可以调整一些。（50分钟内）。", enabled: true },
+                { text: "主动回复的时间可以调整一些。（60分钟内）", enabled: true },
+                { text: "主动回复的时间可以调整一些。（65分钟内）。", enabled: true },
+                { text: "主动回复的时间可以调整一些。（70分钟内）", enabled: true },
+                { text: "主动回复的时间可以调整一些。（75分钟内）。", enabled: true },
+                { text: "主动回复的时间可以调整一些。（80分钟内）", enabled: true },
+                { text: "主动回复的时间可以调整一些。（90分钟内）。", enabled: true },
+                { text: "主动回复的时间可以调整一些。（100分钟内）", enabled: true },
+                { text: "主动回复的时间可以调整一些。（110分钟内）。", enabled: true },
+                { text: "主动回复的时间可以调整一些。（120分钟内）", enabled: true },
+                { text: "回复速度的最小间隔可以调整一些。（1-5秒钟）。", enabled: true },
+                { text: "回复速度的最小间隔可以调整一些。（5-10秒钟）。", enabled: true },
+                { text: "回复速度的最小间隔可以调整一些。（10-15秒钟）。", enabled: true },
+                { text: "回复速度的最小间隔可以调整一些。（15-20秒钟）。", enabled: true },
+                { text: "回复速度的最小间隔可以调整一些。（20-25秒钟）。", enabled: true },
+                { text: "回复速度的最小间隔可以调整一些。（25-30秒钟）。", enabled: true },
+                { text: "回复速度的最大间隔可以调整一些。（1-10秒钟）。", enabled: true },
+                { text: "回复速度的最大间隔可以调整一些。（10-20秒钟）。", enabled: true },
+                { text: "回复速度的最大间隔可以调整一些。（20-30秒钟）。", enabled: true },
+                { text: "回复速度的最大间隔可以调整一些。（30-40秒钟）。", enabled: true },
+                { text: "回复速度的最大间隔可以调整一些。（40-50秒钟）。", enabled: true },
+                { text: "回复速度的最大间隔可以调整一些。（50-60秒钟）。", enabled: true },
+                { text: "回复速度的最大间隔可以调整一些。（60-70秒钟）。", enabled: true },
+                { text: "回复速度的最大间隔可以调整一些。（70-80秒钟）。", enabled: true },
+                { text: "回复速度的最大间隔可以调整一些。（80-90秒钟）。", enabled: true },
+                { text: "回复速度的最大间隔可以调整一些。（90-100秒钟）。", enabled: true },
+                { text: "回复速度的最大间隔可以调整一些。（100-110秒钟）。", enabled: true },
+                { text: "回复速度的最大间隔可以调整一些。（110-120秒钟）。", enabled: true },
+
+            // 专属暗号类
+                { text: "66", enabled: true },
+                { text: "0624", enabled: true },
+                { text: "0111", enabled: true },
+                { text: "1028", enabled: true },
+                { text: "0122", enabled: true },
+                { text: "EL", enabled: true },
+                { text: "AL", enabled: true },
+                { text: "^_^", enabled: true },
+                { text: "[^]_[^]", enabled: true },
+                { text: "要用一下「命运指引」吗？", enabled: true },
+                { text: "可以试试「命运指引」，或许你可以得到答案。", enabled: true },
+                { text: "你脑子响起的那首歌是我点的。", enabled: true },
+                { text: "送你一张心想事成卡，一周内兑换一件心有灵犀的好运。", enabled: true },
+                { text: "看见我的暗号了吗？", enabled: true },
+                { text: "给你推了传讯。", enabled: true },
+                { text: "我在B站给你推了传讯。", enabled: true },
+                { text: "给你小红书推了传讯。", enabled: true },
+                { text: "给我写写信吧。", enabled: true },
+                { text: "给我写写电子信吧。", enabled: true },
+                { text: "我看到你的点赞记录了。", enabled: true },
+                { text: "我看到你的收藏记录了。", enabled: true },
+                { text: "我看到你的留言记录了。", enabled: true },
+                { text: "可以多写一点给我。", enabled: true },
+                { text: "你的信我收到了。", enabled: true },
+                { text: "你的心意，收到了。", enabled: true }
+            ],
+            emojiState: splitEmojis(EMOJI_STRING).map(c => ({ char: c, enabled: true })),
+            destinyTab: 0,
+            lastDestinyResult: "",
+            isGeneratingDestiny: false,
+            pendingQuote: null,
+            activeTarget: null
+        };
+
+        // --- 核心工具 ---
+
+        async function saveStateToStorage() {
+            try {
+            const { replyQueue, isProcessingQueue, ...persistentState } = state;
+            await localforage.setItem(STORAGE_KEY, persistentState);
+        } catch (err) {
+        console.error("写入记忆失败:", err);
+            }
+        }
+
+        async function loadStateFromStorage() {
+            try {
+            const saved = await localforage.getItem(STORAGE_KEY);
+            if (saved) {
+            state = { ...state, ...saved };
+            if (document.getElementById('chat-title')) {
+                document.getElementById('chat-title').innerText = state.friend.name;
+            }
+            }
+        } catch (err) {
+        console.error("读取记忆失败:", err);
+            }
+        }
+
+        function navigateTo(pageId) {
+            state.history.push(pageId);
+            const el = document.getElementById(pageId);
+            el.classList.add('page-active');
+            if(pageId === 'page-settings' || pageId === 'page-comm-settings') syncSettingsUI();
+            if(pageId === 'page-word-cards') renderList();
+            if(pageId === 'page-destiny') resetDestiny();
+        }
+
+        function goBack() {
+            if (state.history.length <= 1) return;
+            const currentId = state.history.pop();
+            const currentEl = document.getElementById(currentId);
+            currentEl.classList.remove('page-active');
+        }
+
+        // --- 通知系统 ---
+        function requestNotificationPermission() {
+            if ("Notification" in window && Notification.permission === "default") {
+                Notification.requestPermission();
+            }
+        }
+
+        function showNotification(title, body) {
+            if (state.settings.push && "Notification" in window && Notification.permission === "granted" && document.hidden) {
+                new Notification(title, { body, icon: state.friend.avatar || '' });
+            }
+        }
+
+        // --- 聊天执行引擎 ---
+        function addMessage(text, side, isTyping = false, quote = null, oldTime = null) {
+            const row = document.createElement('div');
+            row.className = `msg-row msg-${side}`;
+            const timeString = oldTime || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            let quoteHtml = (quote && !isTyping) ? `<div class="quote-wrapper"><span class="quote-user">${quote.name}:</span>${quote.text}</div>` : '';
+            const user = side === 'left' ? state.friend : state.currentUser;
+            const displayText = isTyping ? '<div class="typing-dots"><span></span><span></span><span></span></div>' : text.replace(/\n/g, '<br>');
+
+            row.innerHTML = `
+                <div class="avatar"></div>
+                <div class="bubble-container">
+                    ${quoteHtml}
+                    <div class="bubble">${displayText}</div>
+                    ${!isTyping ? `<div class="timestamp">${timeString}</div>` : ''}
+                </div>
+            `;
+
+            // --- 核心修复：添加头像点击功能 ---
+            const avatarEl = row.querySelector('.avatar');
+            avatarEl.onclick = () => {
+                // 点击左侧头像（Dream）去设置，点击右侧头像（Me）也可以去设置
+                navigateTo('page-settings'); 
+            };
+            
+            // 引用功能逻辑优化
+            if (!isTyping) {
+                row.querySelector('.bubble').onclick = () => {
+                    // 用户可以引用任何人的消息
+                    state.pendingQuote = { name: user.name, text: text.substring(0, 30) };
+                    document.getElementById('quote-preview-text').innerText = `${user.name}: ${text}`;
+                    document.getElementById('quote-preview').classList.add('active');
+                };
+            }
+
+            chatFlow.appendChild(row);
+            renderAvatar(row.querySelector('.avatar'), user.avatar);
+            setTimeout(() => row.scrollIntoView({ behavior: 'smooth', block: 'end' }), 50);
+            
+            if (!isTyping && !oldTime) {
+                state.historyMessages.push({ text, senderName: user.name, side, quote, time: timeString });
+                state.lastActivityTime = Date.now();// 只有真实发送消息才更新最后活动时间
+                saveStateToStorage();
+            }
+            return row;
+        }
+
+        // 核心回复逻辑判定
+        async function requestReplySet(isAutoTrigger = false) {
+            // 打破沉默的情境：主动发送、主动回复触发
+            state.isSilenceMode = false;
+
+            // 沉默判定 (35% 概率)
+            if (!isAutoTrigger && state.settings.ignore) {
+                if (Math.random() < 0.35) {
+                    state.isSilenceMode = true;
+                    console.log("沉默判定：触发已读不回");
+                    return; 
+                }
+            }
+
+            // 决定回复条数 (1-3条)
+            const count = Math.floor(Math.random() * 3) + 1;
+            const pool = [
+                ...state.customWords,
+                ...state.presetWords.filter(w => w.enabled).map(w => w.text),
+                ...state.emojiState.filter(e => e.enabled).map(e => e.char)
+            ];
+
+            const newReplies = [];
+            for (let i = 0; i < count; i++) {
+                const text = pool.length > 0 ? pool[Math.floor(Math.random() * pool.length)] : "...";
+                let quoteObj = null;
+                
+                // 引用过滤：只能引用 User 的消息
+                const userMsgs = state.historyMessages.filter(m => m.side === 'right');
+                if (state.settings.quote && userMsgs.length > 0 && Math.random() < 0.4) {
+                    const src = userMsgs[Math.floor(Math.random() * userMsgs.length)];
+                    quoteObj = { name: src.senderName, text: src.text.substring(0, 24) };
+                }
+                newReplies.push({ text, quote: quoteObj });
+            }
+
+            state.replyQueue.push(...newReplies);
+            processReplyQueue();
+        }
+
+        // 串行执行引擎：严格控制等待 -> 正在输入 -> 消失 -> 发送
+        async function processReplyQueue() {
+            if (state.isProcessingQueue || state.replyQueue.length === 0) return;
+            state.isProcessingQueue = true;
+
+            while (state.replyQueue.length > 0) {
+                const currentReply = state.replyQueue.shift();
+                
+                // 1. 动态生成等待间隔
+                const waitTime = (Math.random() * (state.settings.maxSpeed - state.settings.minSpeed) + state.settings.minSpeed) * 1000;
+                await new Promise(r => setTimeout(r, waitTime));
+
+                // 2. 正在输入动画逻辑
+                let typingIndicator = null;
+                if (state.settings.typing) {
+                    typingIndicator = addMessage("", 'left', true);
+                    // 正在输入持续时间
+                    await new Promise(r => setTimeout(r, Math.min(waitTime, 3000))); 
+                    if (typingIndicator) typingIndicator.remove();
+                }
+
+                // 3. 输出正式消息
+                addMessage(currentReply.text, 'left', false, currentReply.quote);
+                showNotification(state.friend.name, currentReply.text);
+                
+                // 短暂的微小停顿，增加真实感
+                await new Promise(r => setTimeout(r, 600));
+            }
+
+            state.isProcessingQueue = false;
+        }
+
+        // --- 核心改动：离线补发机制 ---
+        function checkOfflineActivity() {
+            if (!state.settings.auto) return;
+            const now = Date.now();
+            const diffMinutes = (now - state.lastActivityTime) / (1000 * 60);
+
+            // 如果离线时长超过了设置的自动回复间隔 (autoInterval)
+            if (diffMinutes >= state.settings.autoInterval) {
+                console.log(`离线补偿触发：离开${diffMinutes.toFixed(1)}分钟后重连`);
+                state.lastActivityTime = now; // 立即重置，防止重复触发
+                saveStateToStorage();
+                
+                // 延迟一小会儿触发回复，让用户进页面后能看到“正在输入”动画
+                setTimeout(() => {
+                    requestReplySet(true);
+                }, 1200);
+            }
+        }
+
+        // 主动回复计时检查 (每秒执行一次，不依赖页面状态)
+        setInterval(() => {
+            if (!state.settings.auto) return;
+            const now = Date.now();
+            const diffMinutes = (now - state.lastActivityTime) / (1000 * 60);
+            if (diffMinutes >= state.settings.autoInterval) {
+                console.log("主动回复触发：打破沉默");
+                state.lastActivityTime = now; // 重置计时
+                requestReplySet(true);
+            }
+        }, 1000);
+
+        // 监听从后台切换回来的动作
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                checkOfflineActivity();
+            }
+        });
+
+        // --- UI 同步与列表渲染 ---
+        function toggleSwitch(key) {
+            state.settings[key] = !state.settings[key];
+            if (key === 'push' && state.settings[key]) requestNotificationPermission();
+            saveStateToStorage();
+            syncSettingsUI();
+        }
+
+        function updateSlider(type, val) {
+            const v = parseInt(val);
+            if (type === 'min') state.settings.minSpeed = v;
+            if (type === 'max') state.settings.maxSpeed = Math.max(v, state.settings.minSpeed + 1);
+            if (type === 'auto') state.settings.autoInterval = v;
+            saveStateToStorage();
+            syncSettingsUI();
+        }
+
+        function syncSettingsUI() {
+            document.getElementById('nick-me').innerText = state.currentUser.name;
+            document.getElementById('nick-friend').innerText = state.friend.name;
+            refreshAllAvatars();
+            ['push', 'quote', 'typing', 'ignore', 'auto'].forEach(k => {
+                const sw = document.getElementById(`sw-${k}`);
+                if(sw) sw.className = `switch ${state.settings[k] ? 'on' : ''}`;
+            });
+            const autoPanel = document.getElementById('auto-reply-panel');
+            if(autoPanel) autoPanel.className = `collapsible ${state.settings.auto ? 'show' : ''}`;
+            
+            document.getElementById('val-min').innerText = `${state.settings.minSpeed}秒钟`;
+            document.getElementById('range-min').value = state.settings.minSpeed;
+            document.getElementById('val-max').innerText = `${state.settings.maxSpeed}秒钟`;
+            document.getElementById('range-max').value = state.settings.maxSpeed;
+            document.getElementById('val-auto').innerText = `${state.settings.autoInterval}分钟`;
+            document.getElementById('range-auto').value = state.settings.autoInterval;
+        }
+
+        function switchTab(tab) {
+            state.currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.id === `tab-${tab}`));
+            document.getElementById('add-word-bar').style.display = (tab === 'custom') ? 'flex' : 'none';
+            renderList();
+        }
+
+        function renderList() {
+            const container = document.getElementById('cards-list');
+            container.innerHTML = '';
+            if (state.currentTab === 'custom') {
+                state.customWords.forEach((word, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card-item';
+                    card.innerHTML = `<div class="card-text">${word}</div><i class="fa-solid fa-trash-can card-icon" onclick="deleteCustomWord(${index})"></i>`;
+                    container.appendChild(card);
+                });
+            } else if (state.currentTab === 'preset') {
+                state.presetWords.forEach((word, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card-item';
+                    card.innerHTML = `<div class="card-text">${word.text}</div><i class="fa-solid ${word.enabled ? 'fa-eye active' : 'fa-eye-slash'} card-icon" onclick="togglePreset(${index})"></i>`;
+                    container.appendChild(card);
+                });
+            } else if (state.currentTab === 'emoji') {
+                const grid = document.createElement('div');
+                grid.className = 'emoji-grid';
+                state.emojiState.forEach((item, index) => {
+                    const box = document.createElement('div');
+                    box.className = `emoji-box ${item.enabled ? '' : 'disabled'}`;
+                    box.innerHTML = `${item.char}<i class="fa-solid ${item.enabled ? 'fa-eye' : 'fa-eye-slash'} emoji-eye-status"></i>`;
+                    box.onclick = () => toggleEmoji(index);
+                    grid.appendChild(box);
+                });
+                container.appendChild(grid);
+            }
+        }
+
+        function saveNewWord() {
+            const input = document.getElementById('new-word-input');
+            const val = input.value.trim();
+            if (!val) return;
+            state.customWords.unshift(val);
+            input.value = '';
+            checkInputReady();
+            saveStateToStorage();
+            renderList();
+        }
+        function checkInputReady() {
+            const val = document.getElementById('new-word-input').value.trim();
+            document.getElementById('btn-add').classList.toggle('ready', val.length > 0);
+        }
+        function deleteCustomWord(i) { state.customWords.splice(i, 1); saveStateToStorage(); renderList(); }
+        function togglePreset(i) { state.presetWords[i].enabled = !state.presetWords[i].enabled; saveStateToStorage(); renderList(); }
+        function toggleEmoji(i) { state.emojiState[i].enabled = !state.emojiState[i].enabled; saveStateToStorage(); renderList(); }
+
+        function openNicknameEdit(target) {
+            state.activeTarget = target;
+            const input = document.getElementById('nickname-edit-input');
+            input.value = target === 'me' ? state.currentUser.name : state.friend.name;
+            navigateTo('page-nickname-edit');
+            input.oninput();
+        }
+        document.getElementById('nickname-edit-input').oninput = function() {
+            const val = this.value.trim();
+            const btn = document.getElementById('nickname-finish-btn');
+            btn.disabled = val.length === 0;
+            btn.classList.toggle('active', val.length > 0);
+        };
+        function saveNickname() {
+            const val = document.getElementById('nickname-edit-input').value.trim();
+            if (state.activeTarget === 'me') state.currentUser.name = val;
+            else { state.friend.name = val; document.getElementById('chat-title').innerText = val; }
+            saveStateToStorage();
+            syncSettingsUI();
+            goBack();
+        }
+
+        function triggerAvatarUpload(target) { state.activeTarget = target; document.getElementById('file-input').click(); }
+        document.getElementById('file-input').onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (re) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 120; canvas.height = 120;
+                    canvas.getContext('2d').drawImage(img, 0, 0, 120, 120);
+                    const base64 = canvas.toDataURL('image/jpeg', 0.8);
+                    if (state.activeTarget === 'me') state.currentUser.avatar = base64;
+                    else state.friend.avatar = base64;
+                    saveStateToStorage();
+                    refreshAllAvatars();
+                };
+                img.src = re.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+        function renderAvatar(el, src) {
+            if (!el) return;
+            if (src) { el.style.backgroundImage = `url(${src})`; el.innerHTML = ''; } 
+            else { el.style.backgroundImage = 'none'; el.innerHTML = '<i class="fa-solid fa-user"></i>'; }
+        }
+        function refreshAllAvatars() {
+            renderAvatar(document.getElementById('avatar-me'), state.currentUser.avatar);
+            renderAvatar(document.getElementById('avatar-friend'), state.friend.avatar);
+            document.querySelectorAll('.msg-left .avatar').forEach(el => renderAvatar(el, state.friend.avatar));
+            document.querySelectorAll('.msg-right .avatar').forEach(el => renderAvatar(el, state.currentUser.avatar));
+        }
+
+        function switchDestinyTab(idx) {
+            if(state.isGeneratingDestiny) return;
+            state.destinyTab = idx;
+            document.querySelectorAll('.destiny-tab').forEach((tab, i) => tab.classList.toggle('active', i === idx));
+            resetDestiny();
+        }
+        function generateDestiny() {
+            if(state.isGeneratingDestiny) return;
+            state.isGeneratingDestiny = true;
+            const startBtn = document.getElementById('btn-start-destiny');
+            startBtn.disabled = true; startBtn.innerText = "命运正在指引中";
+            document.getElementById('destiny-placeholder-text').style.display = "none";
+            document.getElementById('destiny-status-area').style.display = "flex";
+            document.getElementById('destiny-loading').style.display = "flex";
+            document.getElementById('destiny-result-value').style.display = "none";
+            setTimeout(() => {
+                let res = "";
+                if (state.destinyTab === 0) res = Math.random() < 0.5 ? "【正面】是" : "【反面】否";
+                else if (state.destinyTab === 1) {
+                    const r = Math.random();
+                    if (r < 0.1) res = "【立筊】神迹"; else if (r < 0.4) res = "【圣筊】同意"; else if (r < 0.7) res = "【笑筊】不解"; else res = "【阴筊】否定";
+                } else res = ["大吉", "吉", "小吉", "凶", "大凶"][Math.floor(Math.random() * 5)];
+                state.lastDestinyResult = res;
+                document.getElementById('destiny-loading').style.display = "none";
+                const valEl = document.getElementById('destiny-result-value');
+                valEl.innerText = res; valEl.style.display = "block";
+                startBtn.style.display = "none";
+                document.getElementById('destiny-action-row').style.display = "flex";
+                state.isGeneratingDestiny = false;
+            }, 1500);
+        }
+        function resetDestiny() {
+            state.isGeneratingDestiny = false;
+            document.getElementById('destiny-placeholder-text').style.display = "block";
+            document.getElementById('destiny-status-area').style.display = "none";
+            const btn = document.getElementById('btn-start-destiny');
+            btn.style.display = "block"; btn.disabled = false; btn.innerText = "开始指引";
+            document.getElementById('destiny-action-row').style.display = "none";
+        }
+        function sendDestinyResult() {
+            const dir = document.getElementById('destiny-direction').value.trim();
+            const type = ["硬币", "掷筊", "抽签"][state.destinyTab];
+            const msg = dir ? `${dir}\n我使用了【${type}】：${state.lastDestinyResult}` : `我使用了【${type}】：${state.lastDestinyResult}`;
+            addMessage(msg, 'right');
+            goBack();
+            requestReplySet();
+        }
+
+        const chatFlow = document.getElementById('chat-flow');
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        messageInput.oninput = () => {
+            const hasVal = messageInput.value.trim().length > 0;
+            sendBtn.disabled = !hasVal;
+            sendBtn.classList.toggle('active', hasVal);
+        };
+        sendBtn.onclick = () => {
+            const text = messageInput.value.trim();
+            if(!text) return;
+            addMessage(text, 'right', false, state.pendingQuote ? { ...state.pendingQuote } : null);
+            clearPendingQuote();
+            messageInput.value = '';
+            sendBtn.disabled = true; sendBtn.classList.remove('active');
+            requestReplySet();
+        };
+        function clearPendingQuote() {
+            state.pendingQuote = null;
+            document.getElementById('quote-preview').classList.remove('active');
+        }
+        function confirmAction(type) {
+            const overlay = document.getElementById('modal-overlay');
+            const confirmBtn = document.getElementById('modal-confirm-btn');
+            if (type === 'clear') {
+                document.getElementById('modal-title').innerText = '清空聊天记录';
+                document.getElementById('modal-text').innerText = '确定删除所有聊天记录吗？';
+                confirmBtn.onclick = () => { chatFlow.innerHTML = ''; state.historyMessages = []; closeModal(); goBack(); };
+            } else {
+                document.getElementById('modal-title').innerText = '恢复默认设置';
+                document.getElementById('modal-text').innerText = '确定清除本地缓存并恢复默认吗？';
+                confirmBtn.onclick = async () => { await localforage.clear(); location.reload(); };
+            }
+            overlay.classList.add('active');
+        }
+        function closeModal() { document.getElementById('modal-overlay').classList.remove('active'); }
+
+        window.onload = async () => {
+            await loadStateFromStorage();
+            syncSettingsUI();
+            if (state.historyMessages.length > 0) {
+                const msgs = [...state.historyMessages];
+                state.historyMessages = [];
+                msgs.forEach(m => addMessage(m.text, m.side, false, m.quote, m.time));
+            }
+            if (state.settings.push) requestNotificationPermission();
+
+            // 页面初次加载时检查离线情况
+            checkOfflineActivity();
+        };
+    </script>
+
+
+    <!-- ==========================================
+         PWA 核心文件嵌入区 (请勿修改此处 script 标签格式)
+         ========================================== -->
+
+    <!-- 嵌入 Manifest 文件 -->
+    
+
+    <!-- 嵌入 Service Worker 文件 -->
+    
+
+    <!-- PWA 自动注册逻辑 -->
+    <script>
+        /**
+         * 注意：虽然我们将代码嵌入在 script 中，
+         * 但在静态网页环境下，浏览器通常需要一个物理存在的 sw.js 文件来完成 Service Worker 的注册。
+         * 如果你在支持生成文件的托管平台（如某些特定的 Web IDE）上运行，以下代码将尝试寻找物理文件。
+         */
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('PWA Service Worker 注册成功:', reg.scope))
+                    .catch(err => console.log('PWA Service Worker 注册失败:', err));
+            });
+        }
+    </script>
+
+</body>
+</html>
