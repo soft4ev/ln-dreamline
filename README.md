@@ -1,8 +1,6 @@
 # 光与夜之恋：梦间讯息
 
-在光与夜之间，有人正在等待你的讯息。
-
-Messages Across Light and Night
-
+—— 在光与夜之间，有人正在等待你的讯息。
 Somewhere between light and night,
+
 someone is waiting for your message.
