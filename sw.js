@@ -1,4 +1,4 @@
-const CACHE_NAME = 'light-night-dreamline-v1';
+const CACHE_NAME = 'light-night-dreamline-v4';
     const ASSETS_TO_CACHE = [
       './index.html',
       'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css'
@@ -35,3 +35,18 @@ const CACHE_NAME = 'light-night-dreamline-v1';
         })
       );
     });
+
+    // 监听通知点击事件
+    self.addEventListener('notificationclick', (event) => {
+      event.notification.close(); // 点击后关闭通知点
+
+    // 逻辑：如果页面已经打开则聚焦，否则打开新窗口
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+            if (clientList.length > 0) {
+                return clientList[0].focus();
+            }
+            return clients.openWindow('./');
+        })
+    );
+});
