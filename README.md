@@ -1,5 +1,5 @@
-# 光与夜之恋：梦间讯息
+# 光与夜之恋：心轨信号
 
-—— 在光与夜之间，有人正在等待你的讯息。
+—— 在光与夜之间，总有人与你同线。
 
-Somewhere between light and night,someone is waiting for your message.
+Somewhere between light and night, someone is always on your line.
