@@ -1214,6 +1214,11 @@
 
                 sortableInstance = new Sortable(container, {
                     animation: 150,
+                    // --- 以下是新增的逻辑代码 ---
+                    delay: 200,            // 按住 200 毫秒（0.2秒）才开启拖拽
+                    delayOnTouchOnly: true, // 关键：只在手机触摸屏上延迟，电脑鼠标点击依然秒触发
+                    touchStartThreshold: 5, // 容错值：手指如果滑动超过 5 像素，就认为是想翻页，自动取消排序触发
+                    // -------------------------
                     ghostClass: 'sortable-ghost',
                     chosenClass: 'sortable-chosen',
                     onEnd: function (evt) {
