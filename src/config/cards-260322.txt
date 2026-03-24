@@ -60,6 +60,8 @@
                 { text: "早安。", enabled: true },
                 { text: "午安。", enabled: true },
                 { text: "晚安。", enabled: true },
+                { text: "前者。", enabled: true },
+                { text: "后者。", enabled: true },
                 { text: "摸摸。", enabled: true },
                 { text: "亲亲。", enabled: true },
                 { text: "揉揉。", enabled: true },
