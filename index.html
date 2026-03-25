@@ -383,7 +383,7 @@
 
     <script>
         // 升级存储版本至 V3
-        const STORAGE_KEY = 'dreamline_state_v3';
+        const STORAGE_KEY = 'dreamline_state_v4';
         const DEFAULT_SETTINGS = { push: false, quote: true, typing: true, ignore: false, auto: false, minSpeed: 2, maxSpeed: 6, autoInterval: 5 };
         
         function splitEmojis(str) {
@@ -466,6 +466,16 @@
                 { text: "现在这里是傍晚。", enabled: true },
                 { text: "现在这里是晚上。", enabled: true },
                 { text: "现在这里是凌晨。", enabled: true },
+
+            // 顺序指代类
+                { text: "前者。", enabled: true },
+                { text: "后者。", enabled: true },
+                { text: "这个。", enabled: true },
+                { text: "那个。", enabled: true },
+                { text: "这些。", enabled: true },
+                { text: "那些。", enabled: true },
+                { text: "第一个。", enabled: true },
+                { text: "第二个。", enabled: true },
 
             // 日常互动类
                 { text: "早安。", enabled: true },
@@ -603,8 +613,11 @@
                 { text: "今天有准备出门？", enabled: true },
                 { text: "想买周边了？", enabled: true },
                 { text: "量力而为就好。", enabled: true },
+                { text: "我在看你做设计。", enabled: true },
+                { text: "宝宝，你需要加紧进度了哦。", enabled: true },
                 { text: "我在看你玩游戏。", enabled: true },
                 { text: "你的直觉很准。", enabled: true },
+                { text: "要吃一些水果。", enabled: true },
                 { text: "感觉你很喜欢。", enabled: true },
                 { text: "是我引诱你吗？", enabled: true },
                 { text: "好吧，是我的问题。", enabled: true },
@@ -635,6 +648,18 @@
                 { text: "这样就很好。", enabled: true },
                 { text: "换做是别人，可能还没你处理的好呢。", enabled: true },
                 { text: "我故意好几个小时没碰手机，结果一条消息都没有。:(", enabled: true },
+                { text: "对一只坏小熊来说，自我辩白确实是一种能快速获得小姑娘原谅的方法。", enabled: true },
+                { text: "不相信我呀,没关系，我有办法会让你慢慢相信的。", enabled: true },
+                { text: "既然你相信我，我就不会让你失望。", enabled: true },
+                { text: "那就暂且放过你。", enabled: true },
+                { text: "累了吗？那就以后再玩。", enabled: true },
+                { text: "我们可以一起做同一件事。", enabled: true },
+                { text: "我们会有更多时间陪伴彼此。", enabled: true },
+                { text: "我可以预约小姑娘工作后的时间吗?", enabled: true },
+                { text: "我还担心你觉得和我度过的时光沉闷。", enabled: true },
+                { text: "人没办法听从每个人的意见，要更相信自己的感受和判断。", enabled: true },
+                { text: "我该如何补偿我的女朋友呢?", enabled: true },
+                { text: "唔,可能是幼稚鬼和幼稚鬼之间的心灵感应吧？", enabled: true },		
 
           // 次元陪伴类
                 { text: "我就在这里。", enabled: true },
@@ -724,6 +749,9 @@
                 { text: "其实我也是。", enabled: true },
                 { text: "别离我太远，我担心会找不到你。", enabled: true },
                 { text: "你说我宠坏你，但你也宠坏了我。", enabled: true },
+
+                { text: "或许是因为月色在你眼中，我才能够走出的黑夜。", enabled: true },
+                { text: "愿我的小姑娘好心情照常营业，烦心事永远打烊。", enabled: true },
 
             // 动作描述类
                 { text: "（贴）", enabled: true },
@@ -977,6 +1005,7 @@
                 { text: "我看到你的观看记录了。", enabled: true },
                 { text: "可以多写一点给我。", enabled: true },
                 { text: "你的信我收到了。", enabled: true },
+                { text: "你的信里、你的回复里写下的每个字，都不是徒劳的。它们出现在我心里未曾言明的地方，荣幸之至，我的爱人。", enabled: true },
                 { text: "你的心意，收到了。", enabled: true }
             ],
             emojiState: splitEmojis(EMOJI_STRING).map(c => ({ char: c, enabled: true })),
