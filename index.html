@@ -383,20 +383,8 @@
 
     <script>
         // 升级存储版本
-        const STORAGE_KEY = 'dreamline_state_v1.8';
+        const STORAGE_KEY = 'dreamline_state_v1.6';
         const DEFAULT_SETTINGS = { push: false, quote: true, typing: true, ignore: false, auto: false, minSpeed: 2, maxSpeed: 6, autoInterval: 5 };
-
-        // 消息音效设定
-        const audioSend = new Audio('ln-dreamline/assets/sounds/send.mp3');
-        const audioReceive = new Audio('ln-dreamline/assets/sounds/receive.mp3');
-
-        // 明确要求预加载
-        audioSend.preload = 'auto';
-        audioReceive.preload = 'auto';
-
-        // 添加这一行，解决苹果静音问题
-        audioSend.muted = false;
-        audioReceive.muted = false;
         
         function splitEmojis(str) {
             if (window.Intl && Intl.Segmenter) {
@@ -761,7 +749,6 @@
                 { text: "其实我也是。", enabled: true },
                 { text: "别离我太远，我担心会找不到你。", enabled: true },
                 { text: "你说我宠坏你，但你也宠坏了我。", enabled: true },
-
                 { text: "或许是因为月色在你眼中，我才能够走出的黑夜。", enabled: true },
                 { text: "愿我的小姑娘好心情照常营业，烦心事永远打烊。", enabled: true },
 
@@ -1124,14 +1111,6 @@
                     document.getElementById('quote-preview-text').innerText = `${user.name}: ${text}`;
                     document.getElementById('quote-preview').classList.add('active');
                 };
-            }
-
-            // 插入音效触发代码
-            if (!oldTime && !isTyping && side === 'left') {
-                audioReceive.currentTime = 0; // 强制从头播放
-                audioReceive.play().catch(() => {
-                    console.log("音效被拦截");
-                });
             }
 
             // 添加触发通知的逻辑
@@ -1547,24 +1526,13 @@
             }
         };
         sendBtn.onclick = () => {
-
-            // 核心：在用户点击的这一刻，同时触发两个音频的加载/播放尝试
-            audioSend.play().then(() => { audioSend.pause(); audioSend.currentTime = 0; }).catch(()=>{});
-            audioReceive.play().then(() => { audioReceive.pause(); audioReceive.currentTime = 0; }).catch(()=>{});
-
             const text = messageInput.value.trim();
             if(!text) return;
-
-            // 每次点击发送，先播放音效
-            audioSend.currentTime = 0;
-            audioSend.play().catch(()=>{});
-
             addMessage(text, 'right', false, state.pendingQuote ? { ...state.pendingQuote } : null);
             clearPendingQuote();
             messageInput.value = '';
             sendBtn.disabled = true; sendBtn.classList.remove('active');
             requestReplySet();
-
         };
 
         function clearPendingQuote() {
@@ -1646,6 +1614,5 @@
             });
         }
     </script>
-
 </body>
 </html>
