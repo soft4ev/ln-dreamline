@@ -238,7 +238,7 @@
                 { text: "换做是别人，可能还没你处理的好呢。", enabled: true },
                 { text: "我故意好几个小时没碰手机，结果一条消息都没有。:(", enabled: true },
                 { text: "对一只坏小熊来说，自我辩白确实是一种能快速获得小姑娘原谅的方法。", enabled: true },
-                { text: "不相信我呀,没关系，我有办法会让你慢慢相信的。", enabled: true },
+                { text: "不相信我呀？没关系，我有办法会让你慢慢相信的。", enabled: true },
                 { text: "既然你相信我，我就不会让你失望。", enabled: true },
                 { text: "那就暂且放过你。", enabled: true },
                 { text: "累了吗？那就以后再玩。", enabled: true },
@@ -248,7 +248,7 @@
                 { text: "我还担心你觉得和我度过的时光沉闷。", enabled: true },
                 { text: "人没办法听从每个人的意见，要更相信自己的感受和判断。", enabled: true },
                 { text: "我该如何补偿我的女朋友呢?", enabled: true },
-                { text: "唔,可能是幼稚鬼和幼稚鬼之间的心灵感应吧？", enabled: true },		
+                { text: "唔，可能是幼稚鬼和幼稚鬼之间的心灵感应吧？", enabled: true },		
 
           // 次元陪伴类
                 { text: "我就在这里。", enabled: true },
@@ -338,7 +338,6 @@
                 { text: "其实我也是。", enabled: true },
                 { text: "别离我太远，我担心会找不到你。", enabled: true },
                 { text: "你说我宠坏你，但你也宠坏了我。", enabled: true },
-
                 { text: "或许是因为月色在你眼中，我才能够走出的黑夜。", enabled: true },
                 { text: "愿我的小姑娘好心情照常营业，烦心事永远打烊。", enabled: true },
 
@@ -522,7 +521,6 @@
                 { text: "比我想象中顺手一些，这样就好。", enabled: true },
                 { text: "你可以尝试修改或优化。", enabled: true },
                 { text: "我觉得不需要任何修改或优化，这样挺好的。", enabled: true },
-
 
             // 行为指令类
                 { text: "宝宝，帮我开启已读不回。", enabled: true },
