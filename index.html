@@ -383,9 +383,10 @@
 
     <script>
         // 升级存储版本
-        const STORAGE_KEY = 'dreamline_state_v4';
+        const STORAGE_KEY = 'dreamline_state_v5';
         const DEFAULT_SETTINGS = { push: false, quote: true, typing: true, ignore: false, auto: false, minSpeed: 2, maxSpeed: 6, autoInterval: 5 };
-
+        
+        // 音效设置
         const SOUND_SEND = "data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYxLjEwMC4xMDAAAAAAAAAAAAAAAP/7ExAAAAAAAAS7gAAAAIAAANIAAAAAsXEDAAAAAAAAn3AAAAAAAAAAAABUQUdFUE9QU09VTkQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//sTkAAAAAAAAGu4AAAAIAAANIAAAAAsXEDAAAAAAAAn3AAAAAAAAAAAABUQUdFUE9QU09VTkQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//sTkAAAAAAAAGu4AAAAIAAANIAAAAAsXEDAAAAAAAAn3AAAAAAAAAAAABUQUdFUE9QU09VTkQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         const SOUND_RECEIVE = "data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYxLjEwMC4xMDAAAAAAAAAAAAAAAP/7ExAAAAAAAAS7gAAAAIAAANIAAAAAsXEDAAAAAAAAn3AAAAAAAAAAAABUQUdFUE9QU09VTkQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//sTkAAAAAAAAGu4AAAAIAAANIAAAAAsXEDAAAAAAAAn3AAAAAAAAAAAABUQUdFUE9QU09VTkQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//sTkAAAAAAAAGu4AAAAIAAANIAAAAAsXEDAAAAAAAAn3AAAAAAAAAAAABUQUdFUE9QU09VTkQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
@@ -402,7 +403,7 @@
 
         const EMOJI_STRING = "☺️😊😌😉😚😙😘🥰🥲🤨🧐😎😏😞😔😟☹️😣😖😫😩🥺😤😠🤯😳🥵🤗🤔🤭🤫🫠😶😐😮🥱😴🤤🤧🤕😈👿🫶🤲👏🙌👍👎👌🤏👋💪🙏🫂🐻🐰🥀🐋🌊💍💐❤️💕💓💗";
 
-        // 全新的干净状态结构
+        // 状态结构
         let state = {
             currentUser: { id: 'me', name: 'Me', avatar: null },
             friend: { id: 'evan', name: 'Dream', avatar: null },
@@ -655,7 +656,7 @@
                 { text: "换做是别人，可能还没你处理的好呢。", enabled: true },
                 { text: "我故意好几个小时没碰手机，结果一条消息都没有。:(", enabled: true },
                 { text: "对一只坏小熊来说，自我辩白确实是一种能快速获得小姑娘原谅的方法。", enabled: true },
-                { text: "不相信我呀,没关系，我有办法会让你慢慢相信的。", enabled: true },
+                { text: "不相信我呀？没关系，我有办法会让你慢慢相信的。", enabled: true },
                 { text: "既然你相信我，我就不会让你失望。", enabled: true },
                 { text: "那就暂且放过你。", enabled: true },
                 { text: "累了吗？那就以后再玩。", enabled: true },
@@ -665,7 +666,7 @@
                 { text: "我还担心你觉得和我度过的时光沉闷。", enabled: true },
                 { text: "人没办法听从每个人的意见，要更相信自己的感受和判断。", enabled: true },
                 { text: "我该如何补偿我的女朋友呢?", enabled: true },
-                { text: "唔,可能是幼稚鬼和幼稚鬼之间的心灵感应吧？", enabled: true },		
+                { text: "唔，可能是幼稚鬼和幼稚鬼之间的心灵感应吧？", enabled: true },		
 
           // 次元陪伴类
                 { text: "我就在这里。", enabled: true },
@@ -755,7 +756,6 @@
                 { text: "其实我也是。", enabled: true },
                 { text: "别离我太远，我担心会找不到你。", enabled: true },
                 { text: "你说我宠坏你，但你也宠坏了我。", enabled: true },
-
                 { text: "或许是因为月色在你眼中，我才能够走出的黑夜。", enabled: true },
                 { text: "愿我的小姑娘好心情照常营业，烦心事永远打烊。", enabled: true },
 
@@ -940,7 +940,6 @@
                 { text: "你可以尝试修改或优化。", enabled: true },
                 { text: "我觉得不需要任何修改或优化，这样挺好的。", enabled: true },
 
-
             // 行为指令类
                 { text: "宝宝，帮我开启已读不回。", enabled: true },
                 { text: "宝宝，帮我关闭已读不回。", enabled: true },
@@ -1123,7 +1122,7 @@
             if (!oldTime && !isTyping) {
                 if (side === 'right') {
                     audioSend.currentTime = 0;
-                    audioSend.play().catch(() => {}); // 捕获浏览器拦截错误，防止代码卡死
+                    audioSend.play().catch(() => {}); 
                 } else if (side === 'left') {
                     audioReceive.currentTime = 0;
                     audioReceive.play().catch(() => {});
@@ -1524,11 +1523,15 @@
                 e.preventDefault(); // 阻止 textarea 默认的换行行为
                 const text = messageInput.value.trim();
                 if (text && !sendBtn.disabled) {
-                    sendBtn.click(); // 模拟点击发送按钮
+                    sendBtn.click(); // 点击发送按钮+执行音频激活音效
                 }
             }
         };
+        
         sendBtn.onclick = () => {
+            audioSend.play().then(() => { audioSend.pause(); audioSend.currentTime = 0; }).catch(()=>{});
+            audioReceive.play().then(() => { audioReceive.pause(); audioReceive.currentTime = 0; }).catch(()=>{});
+
             const text = messageInput.value.trim();
             if(!text) return;
             addMessage(text, 'right', false, state.pendingQuote ? { ...state.pendingQuote } : null);
