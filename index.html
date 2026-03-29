@@ -389,6 +389,10 @@
         // 消息音效设定
         const audioSend = new Audio('assets/sounds/send.mp3');
         const audioReceive = new Audio('assets/sounds/receive.mp3');
+
+        // 明确要求预加载
+        audioSend.preload = 'auto';
+        audioReceive.preload = 'auto';
         
         function splitEmojis(str) {
             if (window.Intl && Intl.Segmenter) {
