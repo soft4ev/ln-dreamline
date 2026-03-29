@@ -383,8 +383,12 @@
 
     <script>
         // 升级存储版本
-        const STORAGE_KEY = 'dreamline_state_v4';
+        const STORAGE_KEY = 'dreamline_state_v5';
         const DEFAULT_SETTINGS = { push: false, quote: true, typing: true, ignore: false, auto: false, minSpeed: 2, maxSpeed: 6, autoInterval: 5 };
+
+        // 消息音效设定
+        const audioSend = new Audio('assets/sounds/send.mp3');
+        const audioReceive = new Audio('assets/sounds/receive.mp3');
         
         function splitEmojis(str) {
             if (window.Intl && Intl.Segmenter) {
@@ -1114,6 +1118,19 @@
                 };
             }
 
+            // 插入音效触发代码
+            if (!oldTime && !isTyping && side === 'left') {
+                audioReceive.currentTime = 0; // 强制从头播放
+                audioReceive.play().catch(() => {
+                    console.log("对方消息音效播放被拦截，需用户交互后生效");
+                });
+            }
+
+            // 添加触发通知的逻辑
+            if (side === 'left' && !isTyping && !oldTime) {
+                showNotification(state.friend.name, text);
+            }
+
             // 添加触发通知的逻辑
             if (side === 'left' && !isTyping && !oldTime) {
                 showNotification(state.friend.name, text);
@@ -1232,8 +1249,8 @@
             document.getElementById('add-word-bar').style.display = (tab === 'custom') ? 'flex' : 'none';
             renderList();
         }
-
-        function renderList() {
+        // 渲染函数，支持传入关键字过滤
+        function renderList(keyword = "") {
             const container = document.getElementById('cards-list');
             container.innerHTML = '';
             
@@ -1243,42 +1260,51 @@
             }
 
             if (state.currentTab === 'custom') {
-                state.mainCards.forEach((item, index) => {
-                    const card = document.createElement('div');
-                    card.className = `card-item ${item.enabled ? '' : 'disabled'}`;
-                    card.setAttribute('data-index', index);
-                    card.innerHTML = `
-                        <div class="card-text">${item.text}</div>
-                        <div class="card-actions">
-                            <i class="fa-solid fa-pen-to-square card-icon edit" onclick="editWord(${index})"></i>
-                            <i class="fa-solid ${item.enabled ? 'fa-eye active' : 'fa-eye-slash'} card-icon" onclick="toggleWordStatus(${index})"></i>
-                            <i class="fa-solid fa-trash-can card-icon delete" onclick="deleteWord(${index})"></i>
-                        </div>
+                // --- 核心过滤逻辑 ---
+                const filteredCards = state.mainCards.filter(item => {
+                    // 如果没有输入内容，显示全部；如果有，则匹配相同开头的内容
+                    return keyword === "" || item.text.startsWith(keyword);
+                });
+
+                filteredCards.forEach((item) => {
+                // 注意：因为过滤后索引会变，我们需要找到它在原始 state.mainCards 中的真实索引
+                const originalIndex = state.mainCards.indexOf(item);
+
+                const card = document.createElement('div');
+                card.className = `card-item ${item.enabled ? '' : 'disabled'}`;
+                card.setAttribute('data-index', originalIndex);
+                 card.innerHTML = `
+                     <div class="card-text">${item.text}</div>
+                     <div class="card-actions">
+                         <i class="fa-solid fa-pen-to-square card-icon edit" onclick="editWord(${originalIndex})"></i>
+                         <i class="fa-solid ${item.enabled ? 'fa-eye active' : 'fa-eye-slash'} card-icon" onclick="toggleWordStatus(${originalIndex})"></i>
+                         <i class="fa-solid fa-trash-can card-icon delete" onclick="deleteWord(${originalIndex})"></i>
+                     </div>
                     `;
                     container.appendChild(card);
                 });
 
-                sortableInstance = new Sortable(container, {
-                    animation: 150,
-                    // --- 以下是新增的逻辑代码 ---
-                    delay: 200,            // 按住 200 毫秒（0.2秒）才开启拖拽
-                    delayOnTouchOnly: true, // 关键：只在手机触摸屏上延迟，电脑鼠标点击依然秒触发
-                    touchStartThreshold: 5, // 容错值：手指如果滑动超过 5 像素，就认为是想翻页，自动取消排序触发
-                    // -------------------------
-                    ghostClass: 'sortable-ghost',
-                    chosenClass: 'sortable-chosen',
-                    onEnd: function (evt) {
-                        const oldIndex = evt.oldIndex;
-                        const newIndex = evt.newIndex;
-                        if (oldIndex === newIndex) return;
-                        const movedItem = state.mainCards.splice(oldIndex, 1)[0];
-                        state.mainCards.splice(newIndex, 0, movedItem);
-                        saveStateToStorage();
-                        renderList();
-                    }
-                });
+                    // 只有在没有搜索（keyword为空）时才允许拖拽排序，防止排序逻辑混乱
+                    if (keyword === "") {
+                    sortableInstance = new Sortable(container, {
+                        animation: 150,
+                        delay: 200,
+                        delayOnTouchOnly: true,
+                        touchStartThreshold: 5,
+                        onEnd: function (evt) {
+                            const oldIndex = evt.oldIndex;
+                            const newIndex = evt.newIndex;
+                            if (oldIndex === newIndex) return;
+                            const movedItem = state.mainCards.splice(oldIndex, 1)[0];
+                            state.mainCards.splice(newIndex, 0, movedItem);
+                            saveStateToStorage();
+                            renderList();
+                        }
+                    });
+                }
 
             } else if (state.currentTab === 'emoji') {
+                // 表情包页保持原样
                 const grid = document.createElement('div');
                 grid.className = 'emoji-grid';
                 state.emojiState.forEach((item, index) => {
@@ -1332,10 +1358,15 @@
             saveStateToStorage(); 
             renderList(); 
         }
-
+        // 实时搜索与按钮状态检查
         function checkInputReady() {
-            const val = document.getElementById('new-word-input').value.trim();
+            const inputEl = document.getElementById('new-word-input');
+            const val = inputEl.value.trim();
+
+            // 1. 控制“添加”按钮的亮起状态
             document.getElementById('btn-add').classList.toggle('ready', val.length > 0);
+            // 2. 执行实时过滤刷新
+            renderList(val);
         }
 
         <!-- 设置与辅助逻辑 -->
@@ -1513,6 +1544,14 @@
             }
         };
         sendBtn.onclick = () => {
+
+            // 每次点击发送，先播放音效
+            audioSend.currentTime = 0;
+            audioSend.play().catch(()=>{});
+
+            // 同时“顺便”静音预热对方的声音，解决 iOS 拦截问题
+            audioReceive.play().then(() => { audioReceive.pause(); }).catch(()=>{});
+
             const text = messageInput.value.trim();
             if(!text) return;
             addMessage(text, 'right', false, state.pendingQuote ? { ...state.pendingQuote } : null);
