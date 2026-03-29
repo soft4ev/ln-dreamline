@@ -1,4 +1,4 @@
-const CACHE_NAME = 'light-night-dreamline-v1.6';
+const CACHE_NAME = 'light-night-dreamline-v6';
     const ASSETS_TO_CACHE = [
       './index.html',
       'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css'

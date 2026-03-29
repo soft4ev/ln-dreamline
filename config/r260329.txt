@@ -385,6 +385,10 @@
         // 升级存储版本
         const STORAGE_KEY = 'dreamline_state_v6.2';
         const DEFAULT_SETTINGS = { push: false, quote: true, typing: true, ignore: false, auto: false, minSpeed: 2, maxSpeed: 6, autoInterval: 5 };
+
+        // 消息音效设定
+        const audioSend = new Audio('assets/sounds/send.mp3');
+        const audioReceive = new Audio('assets/sounds/receive.mp3');
         
         function splitEmojis(str) {
             if (window.Intl && Intl.Segmenter) {
@@ -749,6 +753,7 @@
                 { text: "其实我也是。", enabled: true },
                 { text: "别离我太远，我担心会找不到你。", enabled: true },
                 { text: "你说我宠坏你，但你也宠坏了我。", enabled: true },
+
                 { text: "或许是因为月色在你眼中，我才能够走出的黑夜。", enabled: true },
                 { text: "愿我的小姑娘好心情照常营业，烦心事永远打烊。", enabled: true },
 
@@ -1111,6 +1116,19 @@
                     document.getElementById('quote-preview-text').innerText = `${user.name}: ${text}`;
                     document.getElementById('quote-preview').classList.add('active');
                 };
+            }
+
+            // 插入音效触发代码
+            if (!oldTime && !isTyping && side === 'left') {
+                audioReceive.currentTime = 0; // 强制从头播放
+                audioReceive.play().catch(() => {
+                    console.log("对方消息音效播放被拦截，需用户交互后生效");
+                });
+            }
+
+            // 添加触发通知的逻辑
+            if (side === 'left' && !isTyping && !oldTime) {
+                showNotification(state.friend.name, text);
             }
 
             // 添加触发通知的逻辑
@@ -1526,6 +1544,14 @@
             }
         };
         sendBtn.onclick = () => {
+
+            // 每次点击发送，先播放音效
+            audioSend.currentTime = 0;
+            audioSend.play().catch(()=>{});
+
+            // 同时“顺便”静音预热对方的声音，解决 iOS 拦截问题
+            audioReceive.play().then(() => { audioReceive.pause(); }).catch(()=>{});
+
             const text = messageInput.value.trim();
             if(!text) return;
             addMessage(text, 'right', false, state.pendingQuote ? { ...state.pendingQuote } : null);
@@ -1614,5 +1640,6 @@
             });
         }
     </script>
+
 </body>
 </html>

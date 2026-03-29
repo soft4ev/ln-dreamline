@@ -4,21 +4,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Light &amp; Night: Dreamline</title>
     
-    <!-- PWA 移动端适配 Meta -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="theme-color" content="#f9f9f9">
-    <meta name="apple-mobile-web-app-title" content="Dreamline">
-    <link rel="apple-touch-icon" href="assets/icons/app-icon.png">
-    <link rel="icon" href="assets/icons/logo.png" type="image/x-icon">
-    
-    <!-- 引用 Manifest (指向下方嵌入的虚拟文件) -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="assets/icons/app-icon.png">
-    <link rel="apple-touch-icon-precomposed" href="assets/icons/app-icon.png">
-    <link rel="icon" sizes="192x192" href="assets/icons/app-icon.png">
-
-    <!-- ⚠️ 请在这里保留你原有的 CSS 和 外部库引用 (如 font-awesome 等) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
     <!-- 引入 Sortable.js 用于拖拽排序 -->
@@ -222,12 +207,6 @@
 </head>
 <body>
 
-    <!-- 
-       [⚠️ 粘贴区] 
-       请在这里粘贴你原本 <body> 标签内的所有 HTML 元素 (如 <div id="app">, <header> 等) 
-    -->
-
-    <div id="app">
     <!-- 聊天主页面 -->
     <div id="page-chat" class="page-container">
         <header>
@@ -376,15 +355,14 @@
     <input type="file" id="file-input" style="display:none" accept="image/*">
     </div>
 
-    <!-- 
-       [⚠️ 粘贴区] 
-       请在这里粘贴你原本脚本中的业务逻辑、State 变量、函数等 
-    -->
-
     <script>
         // 升级存储版本
         const STORAGE_KEY = 'dreamline_state_v6.2';
         const DEFAULT_SETTINGS = { push: false, quote: true, typing: true, ignore: false, auto: false, minSpeed: 2, maxSpeed: 6, autoInterval: 5 };
+
+        // 消息音效设定
+        const audioSend = new Audio('assets/sounds/send.mp3');
+        const audioReceive = new Audio('assets/sounds/receive.mp3');
         
         function splitEmojis(str) {
             if (window.Intl && Intl.Segmenter) {
@@ -749,6 +727,7 @@
                 { text: "其实我也是。", enabled: true },
                 { text: "别离我太远，我担心会找不到你。", enabled: true },
                 { text: "你说我宠坏你，但你也宠坏了我。", enabled: true },
+
                 { text: "或许是因为月色在你眼中，我才能够走出的黑夜。", enabled: true },
                 { text: "愿我的小姑娘好心情照常营业，烦心事永远打烊。", enabled: true },
 
@@ -1111,6 +1090,19 @@
                     document.getElementById('quote-preview-text').innerText = `${user.name}: ${text}`;
                     document.getElementById('quote-preview').classList.add('active');
                 };
+            }
+
+            // 插入音效触发代码
+            if (!oldTime && !isTyping && side === 'left') {
+                audioReceive.currentTime = 0; // 强制从头播放
+                audioReceive.play().catch(() => {
+                    console.log("对方消息音效播放被拦截，需用户交互后生效");
+                });
+            }
+
+            // 添加触发通知的逻辑
+            if (side === 'left' && !isTyping && !oldTime) {
+                showNotification(state.friend.name, text);
             }
 
             // 添加触发通知的逻辑
@@ -1526,6 +1518,14 @@
             }
         };
         sendBtn.onclick = () => {
+
+            // 每次点击发送，先播放音效
+            audioSend.currentTime = 0;
+            audioSend.play().catch(()=>{});
+
+            // 同时“顺便”静音预热对方的声音，解决 iOS 拦截问题
+            audioReceive.play().then(() => { audioReceive.pause(); }).catch(()=>{});
+
             const text = messageInput.value.trim();
             if(!text) return;
             addMessage(text, 'right', false, state.pendingQuote ? { ...state.pendingQuote } : null);
@@ -1587,32 +1587,6 @@
                 }
             }, 1000);
         };
-    </script>
-
-    <!-- ==========================================
-         PWA 核心文件嵌入区 (请勿修改此处 script 标签格式)
-         ========================================== -->
-
-    <!-- 嵌入 Manifest 文件 -->
-    
-
-    <!-- 嵌入 Service Worker 文件 -->
-    
-
-    <!-- PWA 自动注册逻辑 -->
-    <script>
-        /**
-         * 注意：虽然我们将代码嵌入在 script 中，
-         * 但在静态网页环境下，浏览器通常需要一个物理存在的 sw.js 文件来完成 Service Worker 的注册。
-         * 如果你在支持生成文件的托管平台（如某些特定的 Web IDE）上运行，以下代码将尝试寻找物理文件。
-         */
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('PWA Service Worker 注册成功:', reg.scope))
-                    .catch(err => console.log('PWA Service Worker 注册失败:', err));
-            });
-        }
     </script>
 </body>
 </html>
