@@ -18,7 +18,7 @@
     <link rel="apple-touch-icon" href="assets/icons/app-icon.png">
     <link rel="apple-touch-icon-precomposed" href="assets/icons/app-icon.png">
     <link rel="icon" sizes="192x192" href="assets/icons/app-icon.png">
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
@@ -354,7 +354,8 @@
         <div id="cards-list"></div>
         <div class="footer-action-bar" id="add-word-bar">
             <div class="footer-input-wrap"><input type="text" id="new-word-input" oninput="checkInputReady()" placeholder=""></div>
-            <button class="btn-submit ready" id="btn-upload" onclick="document.getElementById('json-upload-input').click()">上传</button>
+            <button class="btn-submit ready" id="btn-export" onclick="exportCards()">导出</button>
+            <button class="btn-submit ready" id="btn-upload" onclick="document.getElementById('json-upload-input').click()">导入</button>
             <button class="btn-submit" id="btn-add" onclick="saveNewWord()">新增</button>
         </div>
     </div>
@@ -396,7 +397,7 @@
 
     <script>
         // 升级存储版本
-        const STORAGE_KEY = 'dreamline_state_v6.3';
+        const STORAGE_KEY = 'dreamline_state_v6.4';
         
         // --- 核心配置 ---
         // 默认开启音效
@@ -476,7 +477,30 @@
             } catch (err) { console.error("Load failed:", err); }
         }
 
-        // --- 字卡上传逻辑 ---
+        // --- 字卡导出逻辑 ---
+        function exportCards() {
+            // 将当前的 mainCards 转换为格式化的 JSON 字符串
+            const dataStr = JSON.stringify(state.mainCards, null, 2);
+            
+            // 创建 Blob 对象
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            
+            // 创建隐藏的下载链接
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "maincards.json";
+            
+            // 触发下载
+            document.body.appendChild(a);
+            a.click();
+            
+            // 结束后清理内存
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // --- 字卡上传(导入)逻辑 ---
         document.getElementById('json-upload-input').onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
@@ -1077,7 +1101,7 @@
                     .catch(err => console.log('PWA Service Worker 注册失败:', err));
             });
         }
-    </script>
 
+    </script>
 </body>
 </html>
