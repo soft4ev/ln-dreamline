@@ -1,4 +1,0 @@
-[
-  { "text": " ", "enabled": true },
-  { "text": " ", "enabled": true }
-]
