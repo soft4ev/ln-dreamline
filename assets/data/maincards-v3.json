@@ -23,7 +23,6 @@
   { "text": "小姑娘。", "enabled": true },
   { "text": "小朋友。", "enabled": true },
   { "text": "小兔子。", "enabled": true },
-
   { "text": "1", "enabled": true },
   { "text": "2", "enabled": true },
   { "text": "3", "enabled": true },
@@ -128,7 +127,6 @@
   { "text": "122", "enabled": true },
   { "text": "624", "enabled": true },
   { "text": "1028", "enabled": true },
-
   { "text": "A", "enabled": true },
   { "text": "I", "enabled": true },
   { "text": "C", "enabled": true },
@@ -141,18 +139,15 @@
   { "text": "R", "enabled": true },
   { "text": "EL", "enabled": true },
   { "text": "AL", "enabled": true },
-
   { "text": ":(", "enabled": true },
   { "text": ":)", "enabled": true },
   { "text": "^_^", "enabled": true },
   { "text": "[^]_[^]", "enabled": true },
-
   { "text": "歌曲。", "enabled": true },
   { "text": "歌词。", "enabled": true },
   { "text": "暗号。", "enabled": true },
   { "text": "传讯。", "enabled": true },
   { "text": "梦占。", "enabled": true },
-
   { "text": "前者。", "enabled": true },
   { "text": "后者。", "enabled": true },
   { "text": "这个。", "enabled": true },
@@ -163,7 +158,6 @@
   { "text": "第二个。", "enabled": true },
   { "text": "第三个。", "enabled": true },
   { "text": "第四个。", "enabled": true },
-
   { "text": "刚才。", "enabled": true },
   { "text": "现在。", "enabled": true },
   { "text": "之前。", "enabled": true },
@@ -195,10 +189,8 @@
   { "text": "刚看了日历，下周五是个好日子。", "enabled": true },
   { "text": "刚看了日历，下周六是个好日子。", "enabled": true },
   { "text": "刚看了日历，下周日是个好日子。", "enabled": true },
-
   { "text": "宝宝，帮我开启已读不回。", "enabled": true },
   { "text": "宝宝，帮我关闭已读不回。", "enabled": true },
-
   { "text": "主动回复的时间可以调整一些。（5分钟内）。", "enabled": true },
   { "text": "主动回复的时间可以调整一些。（10分钟内）", "enabled": true },
   { "text": "主动回复的时间可以调整一些。（15分钟内）。", "enabled": true },
@@ -233,7 +225,6 @@
   { "text": "回复速度的最大间隔可以调整一些。（90-100秒钟）。", "enabled": true },
   { "text": "回复速度的最大间隔可以调整一些。（100-110秒钟）。", "enabled": true },
   { "text": "回复速度的最大间隔可以调整一些。（110-120秒钟）。", "enabled": true },
-
   { "text": "（贴）", "enabled": true },
   { "text": "（亲）", "enabled": true },
   { "text": "（抱）", "enabled": true },
@@ -250,7 +241,6 @@
   { "text": "（皱眉）", "enabled": true },
   { "text": "（委屈）", "enabled": true },
   { "text": "（十指紧扣）", "enabled": true },
-
   { "text": "嗯。", "enabled": true },
   { "text": "嗯嗯。", "enabled": true },
   { "text": "是我。", "enabled": true },
@@ -369,6 +359,7 @@
   { "text": "刚结束一个视频会议，接下来两小时是你的。", "enabled": true },
   { "text": "倒计时三天——你问什么倒计时？见面的倒计时。", "enabled": true },
   { "text": "深夜一点。这个时间给你发消息，会不会吵到你？但我猜你还没睡。", "enabled": true },
+  
   { "text": "我很难过。", "enabled": true },
   { "text": "我很开心。", "enabled": true },
   { "text": "状态很好。", "enabled": true },
