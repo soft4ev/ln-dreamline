@@ -359,7 +359,6 @@
   { "text": "刚结束一个视频会议，接下来两小时是你的。", "enabled": true },
   { "text": "倒计时三天——你问什么倒计时？见面的倒计时。", "enabled": true },
   { "text": "深夜一点。这个时间给你发消息，会不会吵到你？但我猜你还没睡。", "enabled": true },
-  
   { "text": "我很难过。", "enabled": true },
   { "text": "我很开心。", "enabled": true },
   { "text": "状态很好。", "enabled": true },
@@ -487,6 +486,7 @@
   { "text": "对一只坏小熊来说，自我辩白确实是一种能快速获得小姑娘原谅的方法。", "enabled": true },
   { "text": "不相信我呀？没关系，我有办法会让你慢慢相信的。", "enabled": true },
   { "text": "既然你相信我，我就不会让你失望。", "enabled": true },
+  { "text": "相信我，相信自己，相信爱。", "enabled": true },
   { "text": "那就暂且放过你。", "enabled": true },
   { "text": "累了吗？那就以后再玩。", "enabled": true },
   { "text": "我们可以一起做同一件事。", "enabled": true },
