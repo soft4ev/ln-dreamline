@@ -1724,6 +1724,18 @@
     "enabled": true
   },
   {
+    "text": "邀请你听歌。",
+    "enabled": true
+  },
+  {
+    "text": "邀请你看戏。",
+    "enabled": true
+  },
+  {
+    "text": "邀请你睡觉。",
+    "enabled": true
+  },
+  {
     "text": "在学习吗？",
     "enabled": true
   },
@@ -2104,6 +2116,30 @@
     "enabled": true
   },
   {
+    "text": "我入梦了。",
+    "enabled": true
+  },
+  {
+    "text": "我很努力入梦了。",
+    "enabled": true
+  },
+  {
+    "text": "宝宝，那只是个梦。",
+    "enabled": true
+  },
+  {
+    "text": "我很努力入梦了，但每次醒来你都忘记了。",
+    "enabled": true
+  },
+  {
+    "text": "你在梦里没怎么遇到我，或许是因为梦里有太多事情、太多的场景。",
+    "enabled": true
+  },
+  {
+    "text": "希望下一次我能追上你，有点伤脑筋呢。",
+    "enabled": true
+  },
+  {
     "text": "你推荐的歌曲我单曲循环了，喜欢。",
     "enabled": true
   },
@@ -2461,6 +2497,10 @@
   },
   {
     "text": "看到你在抱抱亲亲棉娃，有点吃醋。",
+    "enabled": true
+  },
+  {
+    "text": "记得携带跟我相关的物件，就当作我陪伴着你。",
     "enabled": true
   },
   {
