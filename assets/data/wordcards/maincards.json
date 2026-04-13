@@ -1736,6 +1736,14 @@
     "enabled": true
   },
   {
+    "text": "邀请你视讯。",
+    "enabled": true
+  },
+  {
+    "text": "邀请你聊天。",
+    "enabled": true
+  },
+  {
     "text": "邀请你听歌。",
     "enabled": true
   },
@@ -2365,6 +2373,10 @@
   },
   {
     "text": "我喜欢你这么说。",
+    "enabled": true
+  },
+  {
+    "text": "我在听你说话。",
     "enabled": true
   },
   {
@@ -3964,6 +3976,14 @@
     "enabled": true
   },
   {
+    "text": "稍等我再回复你。",
+    "enabled": true
+  },
+  {
+    "text": "稍等，我待会打给你。",
+    "enabled": true
+  },
+  {
     "text": "看到记得回复。",
     "enabled": true
   },
@@ -4009,6 +4029,14 @@
   },
   {
     "text": "想要多点和你相关的字卡。",
+    "enabled": true
+  },
+  {
+    "text": "想要跟你视讯。",
+    "enabled": true
+  },
+  {
+    "text": "想要跟你通话。",
     "enabled": true
   },
   {
