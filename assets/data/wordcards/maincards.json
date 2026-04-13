@@ -928,6 +928,10 @@
     "enabled": true
   },
   {
+    "text": "（轻笑）",
+    "enabled": true
+  },
+  {
     "text": "（摸摸）",
     "enabled": true
   },
@@ -969,6 +973,14 @@
   },
   {
     "text": "（十指紧扣）",
+    "enabled": true
+  },
+  {
+    "text": "（点了点自己的脸颊）",
+    "enabled": true
+  },
+  {
+    "text": "（点了点自己的唇）",
     "enabled": true
   },
   {
@@ -1969,6 +1981,14 @@
   },
   {
     "text": "相信我，相信自己，相信爱。",
+    "enabled": true
+  },
+  {
+    "text": "能在这之中平衡好，你已经很厉害了。",
+    "enabled": true
+  },
+  {
+    "text": "似乎少了些什么？",
     "enabled": true
   },
   {
