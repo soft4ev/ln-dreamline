@@ -108,7 +108,7 @@
         /* 聊天背景相关样式 */
         .chat-body-wrapper { flex: 1; position: relative; display: flex; flex-direction: column; overflow: hidden; background-color: var(--bg-color); }
         #chat-bg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: 0; display: none; }
-        .chat-bg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.73); /* 浅白色半透明遮罩 */ }
+        .chat-bg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.65); /* 浅白色半透明遮罩 */ }
 
         #chat-flow { flex: 1; overflow-y: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; position: relative; z-index: 1; }
         .msg-row { display: flex; align-items: flex-start; animation: fadeIn 0.3s ease-out; }
@@ -556,7 +556,7 @@
                 <button class="call-btn hangup" id="call-btn-hangup" onclick="hangupCall()"><i class="fa-solid fa-phone-slash"></i></button>
             </div>
         </div>
-        <div class="call-mini-ui">
+        <div class="call-mini-ui" onclick="toggleMiniCall()">
             <i class="fa-solid fa-video"></i>
             <span id="call-mini-time">00:00</span>
         </div>
@@ -932,15 +932,27 @@
             }
         }
 
-        document.getElementById('btn-video-call').onclick = () => {
-            if (callState !== 'idle') return;
-            startCall('user');
-        };
-        
-        document.getElementById('btn-video-call').oncontextmenu = (e) => {
+        // 修复：智能双击检测机制，避免在 iOS 上长按冲突
+        const btnVideoCall = document.getElementById('btn-video-call');
+        let videoCallClickTimer = null;
+
+        btnVideoCall.onclick = (e) => {
             e.preventDefault();
             if (callState !== 'idle') return;
-            startCall('partner');
+
+            if (videoCallClickTimer) {
+                // 双击：清除单次点击的定时器，触发对方来电彩蛋
+                clearTimeout(videoCallClickTimer);
+                videoCallClickTimer = null;
+                startCall('partner'); 
+            } else {
+                // 单击：设置定时器，如果在250ms内没有再次点击，则触发User主动呼叫
+                videoCallClickTimer = setTimeout(() => {
+                    videoCallClickTimer = null;
+                    if (callState !== 'idle') return;
+                    startCall('user'); 
+                }, 250);
+            }
         };
 
         function startCall(initiator) {
