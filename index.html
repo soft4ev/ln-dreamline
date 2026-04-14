@@ -994,6 +994,9 @@
                 document.getElementById('call-btn-reject').style.display = 'flex';
                 document.getElementById('call-btn-answer').style.display = 'flex';
                 document.getElementById('call-btn-hangup').style.display = 'none';
+
+                // --- 新增：触发来电后台推送通知 ---
+                showNotification(state.friend.name, '邀请你视频通话');
             }
             
             callTimeoutTimer = setTimeout(() => {
