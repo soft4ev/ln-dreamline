@@ -974,7 +974,7 @@
             if (initiator === 'user') {
                 renderAvatar(avatarEl, state.friend.avatar);
                 nameEl.innerText = state.friend.name;
-                document.getElementById('call-status').innerText = '等待接听...';
+                document.getElementById('call-status').innerText = '等待对方接受邀请';
                 document.getElementById('call-btn-reject').style.display = 'none';
                 document.getElementById('call-btn-answer').style.display = 'none';
                 document.getElementById('call-btn-hangup').style.display = 'flex';
@@ -990,11 +990,11 @@
             } else {
                 renderAvatar(avatarEl, state.friend.avatar);
                 nameEl.innerText = state.friend.name;
-                document.getElementById('call-status').innerText = '邀请你视频通话...';
+                document.getElementById('call-status').innerText = '邀请你视频通话';
                 document.getElementById('call-btn-reject').style.display = 'flex';
                 document.getElementById('call-btn-answer').style.display = 'flex';
                 document.getElementById('call-btn-hangup').style.display = 'none';
-
+                
                 // --- 新增：触发来电后台推送通知 ---
                 showNotification(state.friend.name, '邀请你视频通话');
             }
@@ -1055,13 +1055,13 @@
             let msgText = '';
             
             if (reason === 'cancelled_by_initiator') {
-                msgText = callInitiator === 'user' ? '□ᐊ 已取消' : '□ᐊ 对方已取消';
+                msgText = callInitiator === 'user' ? '□ᐊ　已取消' : '□ᐊ　对方已取消';
             } else if (reason === 'timeout') {
-                msgText = callInitiator === 'user' ? '□ᐊ 对方未接听' : '□ᐊ 未接听';
+                msgText = callInitiator === 'user' ? '□ᐊ　对方未接听' : '□ᐊ　未接听';
             } else if (reason === 'rejected_by_receiver') {
-                msgText = callInitiator === 'user' ? '□ᐊ 对方已拒绝' : '□ᐊ 已拒绝';
+                msgText = callInitiator === 'user' ? '□ᐊ　对方已拒绝' : '□ᐊ　已拒绝';
             } else if (reason === 'finished') {
-                msgText = `□ᐊ 视频时长 ${formatDuration(callDuration)}`;
+                msgText = `□ᐊ　视频时长 ${formatDuration(callDuration)}`;
             }
             
             addMessage(msgText, callInitiator === 'user' ? 'right' : 'left');
