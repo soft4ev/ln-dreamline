@@ -904,6 +904,7 @@
         let callTimeoutTimer = null;
         let simulatedActionTimer = null;
         let randomCallTimer = null; 
+        let randomHangupTimer = null; // 新增：接通后的随机挂断计时器
 
         function scheduleRandomCall() {
             if (randomCallTimer) {
@@ -1029,6 +1030,21 @@
                 document.getElementById('call-status').innerText = timeStr;
                 document.getElementById('call-mini-time').innerText = timeStr;
             }, 1000);
+
+            // --- 新增：随机挂断机制 ---
+            if (randomHangupTimer) clearTimeout(randomHangupTimer);
+            const minHangupMs = 5 * 60 * 1000;   // 5分钟
+            const maxHangupMs = 120 * 60 * 1000; // 120分钟 (2小时)
+            const hangupDelay = Math.floor(Math.random() * (maxHangupMs - minHangupMs + 1)) + minHangupMs;
+            
+            console.log(`[视讯系统] 通话已接通，模拟对方将在 ${(hangupDelay / 60000).toFixed(1)} 分钟后主动挂断。`);
+            
+            randomHangupTimer = setTimeout(() => {
+                if (callState === 'connected') {
+                    console.log("[视讯系统] 对方有事，主动挂断了电话。");
+                    endCall('finished');
+                }
+            }, hangupDelay);
         }
 
         function rejectCall() {
@@ -1048,6 +1064,11 @@
             clearTimeout(simulatedActionTimer);
             clearInterval(callInterval);
             
+            if (randomHangupTimer) {
+                clearTimeout(randomHangupTimer);
+                randomHangupTimer = null;
+            }
+
             if (audioRingtone) {
                 audioRingtone.pause();
                 audioRingtone.currentTime = 0;
