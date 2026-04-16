@@ -1,5 +1,957 @@
 [
   {
+    "text": "惆怅（有想说但说不出的感觉）",
+    "enabled": true
+  },
+  {
+    "text": "安心（目前状态稳定，没有烦扰）",
+    "enabled": true
+  },
+  {
+    "text": "怀念",
+    "enabled": true
+  },
+  {
+    "text": "冷静（情绪平稳）",
+    "enabled": true
+  },
+  {
+    "text": "惊醒",
+    "enabled": true
+  },
+  {
+    "text": "温柔（态度柔和）",
+    "enabled": true
+  },
+  {
+    "text": "不舍（仍有牵挂）",
+    "enabled": true
+  },
+  {
+    "text": "难言（有内容想表达但无法说明）",
+    "enabled": true
+  },
+  {
+    "text": "思念",
+    "enabled": true
+  },
+  {
+    "text": "愧疚",
+    "enabled": true
+  },
+  {
+    "text": "哀怨（压抑，不满）",
+    "enabled": true
+  },
+  {
+    "text": "歉意（后悔，歉疚）",
+    "enabled": true
+  },
+  {
+    "text": "宽恕（不再执着）",
+    "enabled": true
+  },
+  {
+    "text": "守候（在等或关注）",
+    "enabled": true
+  },
+  {
+    "text": "忐忑（不安，不确定）",
+    "enabled": true
+  },
+  {
+    "text": "释然（放下了）",
+    "enabled": true
+  },
+  {
+    "text": "静候（在等对方主动接近）",
+    "enabled": true
+  },
+  {
+    "text": "断念（不再执着，不再干涉）",
+    "enabled": true
+  },
+  {
+    "text": "祝福",
+    "enabled": true
+  },
+  {
+    "text": "怨恨（仍然记得伤害）",
+    "enabled": true
+  },
+  {
+    "text": "羞愧（不好意思）",
+    "enabled": true
+  },
+  {
+    "text": "安静",
+    "enabled": true
+  },
+  {
+    "text": "牵挂（仍在关注）",
+    "enabled": true
+  },
+  {
+    "text": "放下（决定不再执着）",
+    "enabled": true
+  },
+  {
+    "text": "疲倦（能量或精神状态较弱）",
+    "enabled": true
+  },
+  {
+    "text": "清醒（意识清楚，反应真实）",
+    "enabled": true
+  },
+  {
+    "text": "迟疑（不确定）",
+    "enabled": true
+  },
+  {
+    "text": "坚定（意志明确，有所坚持）",
+    "enabled": true
+  },
+  {
+    "text": "悲悯（难过）",
+    "enabled": true
+  },
+  {
+    "text": "平静",
+    "enabled": true
+  },
+  {
+    "text": "暗喜（内心稍微高兴，没有外露）",
+    "enabled": true
+  },
+  {
+    "text": "焦灼（焦急，急于回应）",
+    "enabled": true
+  },
+  {
+    "text": "惊讶（感到意外）",
+    "enabled": true
+  },
+  {
+    "text": "依恋（很在意）",
+    "enabled": true
+  },
+  {
+    "text": "释怀（心里已经不再计较）",
+    "enabled": true
+  },
+  {
+    "text": "宁静（安稳无波）",
+    "enabled": true
+  },
+  {
+    "text": "空虚（感觉缺乏意义）",
+    "enabled": true
+  },
+  {
+    "text": "压抑（有想法但无法表达）",
+    "enabled": true
+  },
+  {
+    "text": "绝望（无能为力）",
+    "enabled": true
+  },
+  {
+    "text": "温和（愿意沟通）",
+    "enabled": true
+  },
+  {
+    "text": "知道",
+    "enabled": true
+  },
+  {
+    "text": "不知道",
+    "enabled": true
+  },
+  {
+    "text": "想",
+    "enabled": true
+  },
+  {
+    "text": "不想",
+    "enabled": true
+  },
+  {
+    "text": "说",
+    "enabled": true
+  },
+  {
+    "text": "不说",
+    "enabled": true
+  },
+  {
+    "text": "忘了",
+    "enabled": true
+  },
+  {
+    "text": "记得",
+    "enabled": true
+  },
+  {
+    "text": "能",
+    "enabled": true
+  },
+  {
+    "text": "不能",
+    "enabled": true
+  },
+  {
+    "text": "来（正在靠近）",
+    "enabled": true
+  },
+  {
+    "text": "走（已经或正在离开）",
+    "enabled": true
+  },
+  {
+    "text": "看（正在关注或看到）",
+    "enabled": true
+  },
+  {
+    "text": "听",
+    "enabled": true
+  },
+  {
+    "text": "问（也想知道一些事）",
+    "enabled": true
+  },
+  {
+    "text": "回（在回应你、回来、在靠近）",
+    "enabled": true
+  },
+  {
+    "text": "拒绝（不接受）",
+    "enabled": true
+  },
+  {
+    "text": "接受（愿意或同意）",
+    "enabled": true
+  },
+  {
+    "text": "在（与你连接）",
+    "enabled": true
+  },
+  {
+    "text": "不在（此刻离开或未连接）",
+    "enabled": true
+  },
+  {
+    "text": "等（在等你或等回应）",
+    "enabled": true
+  },
+  {
+    "text": "找（在寻找你或答案）",
+    "enabled": true
+  },
+  {
+    "text": "守（在一旁守着，不干涉）",
+    "enabled": true
+  },
+  {
+    "text": "看不见（无法感知某事）",
+    "enabled": true
+  },
+  {
+    "text": "听不到（未接收到信息）",
+    "enabled": true
+  },
+  {
+    "text": "还在（仍然停留或记得）",
+    "enabled": true
+  },
+  {
+    "text": "回避（刻意不回应或不面对）",
+    "enabled": true
+  },
+  {
+    "text": "靠近",
+    "enabled": true
+  },
+  {
+    "text": "离开",
+    "enabled": true
+  },
+  {
+    "text": "保留（暂时不表达）",
+    "enabled": true
+  },
+  {
+    "text": "听到",
+    "enabled": true
+  },
+  {
+    "text": "听不到",
+    "enabled": true
+  },
+  {
+    "text": "看见",
+    "enabled": true
+  },
+  {
+    "text": "看不见（感知受限，无法观察到）",
+    "enabled": true
+  },
+  {
+    "text": "模糊（印象或图像不清晰）",
+    "enabled": true
+  },
+  {
+    "text": "清楚（当前状态明确且稳定）",
+    "enabled": true
+  },
+  {
+    "text": "近（离我很近，或感觉接近）",
+    "enabled": true
+  },
+  {
+    "text": "远（离我很远，或感觉疏离）",
+    "enabled": true
+  },
+  {
+    "text": "隐（暂时不现身，遮蔽）",
+    "enabled": true
+  },
+  {
+    "text": "浮（状态不稳，漂浮不定）",
+    "enabled": true
+  },
+  {
+    "text": "暗（环境或情绪低沉不明）",
+    "enabled": true
+  },
+  {
+    "text": "亮（清晰，意识活跃）",
+    "enabled": true
+  },
+  {
+    "text": "冷（感受到寒意或疏离感）",
+    "enabled": true
+  },
+  {
+    "text": "热（感受到温度或靠近）",
+    "enabled": true
+  },
+  {
+    "text": "响（声音干扰或有动静）",
+    "enabled": true
+  },
+  {
+    "text": "寂（环境静默，没有干扰）",
+    "enabled": true
+  },
+  {
+    "text": "乱（存在干扰或混乱）",
+    "enabled": true
+  },
+  {
+    "text": "静（状态安定，没有波动）",
+    "enabled": true
+  },
+  {
+    "text": "紧（压迫或紧张感）",
+    "enabled": true
+  },
+  {
+    "text": "松（放松或空旷感）",
+    "enabled": true
+  },
+  {
+    "text": "浅（感知表层，较弱或未深入）",
+    "enabled": true
+  },
+  {
+    "text": "深（连接稳定，内在感受）",
+    "enabled": true
+  },
+  {
+    "text": "重（情绪或能量有负担）",
+    "enabled": true
+  },
+  {
+    "text": "轻（能量轻微，转瞬即逝）",
+    "enabled": true
+  },
+  {
+    "text": "涨（情绪上涨，感觉增强）",
+    "enabled": true
+  },
+  {
+    "text": "空（没有明确的回应或内容）",
+    "enabled": true
+  },
+  {
+    "text": "滞（反应迟钝或停滞）",
+    "enabled": true
+  },
+  {
+    "text": "湿（情绪或记忆有黏连感，混淆）",
+    "enabled": true
+  },
+  {
+    "text": "干（状态干枯，感知弱化）",
+    "enabled": true
+  },
+  {
+    "text": "锁（外界阻拦，限制强）",
+    "enabled": true
+  },
+  {
+    "text": "你",
+    "enabled": true
+  },
+  {
+    "text": "我",
+    "enabled": true
+  },
+  {
+    "text": "她",
+    "enabled": true
+  },
+  {
+    "text": "他",
+    "enabled": true
+  },
+  {
+    "text": "妻",
+    "enabled": true
+  },
+  {
+    "text": "父",
+    "enabled": true
+  },
+  {
+    "text": "母",
+    "enabled": true
+  },
+  {
+    "text": "儿",
+    "enabled": true
+  },
+  {
+    "text": "女",
+    "enabled": true
+  },
+  {
+    "text": "孩子",
+    "enabled": true
+  },
+  {
+    "text": "家",
+    "enabled": true
+  },
+  {
+    "text": "别人",
+    "enabled": true
+  },
+  {
+    "text": "那人（刚才提到的某个人）",
+    "enabled": true
+  },
+  {
+    "text": "前世（轮回，记忆，命运）",
+    "enabled": true
+  },
+  {
+    "text": "身边",
+    "enabled": true
+  },
+  {
+    "text": "旧人",
+    "enabled": true
+  },
+  {
+    "text": "梦中",
+    "enabled": true
+  },
+  {
+    "text": "手中（当前掌握或持有的）",
+    "enabled": true
+  },
+  {
+    "text": "名字（称呼）",
+    "enabled": true
+  },
+  {
+    "text": "想法（情感或记忆）",
+    "enabled": true
+  },
+  {
+    "text": "花（美好短暂的情感，记忆）",
+    "enabled": true
+  },
+  {
+    "text": "火（强烈的情绪，突然事件）",
+    "enabled": true
+  },
+  {
+    "text": "水（流动变化的、情绪化、联系）",
+    "enabled": true
+  },
+  {
+    "text": "风（传递、变化）",
+    "enabled": true
+  },
+  {
+    "text": "镜（反射、内省）",
+    "enabled": true
+  },
+  {
+    "text": "锁（封闭、阻隔）",
+    "enabled": true
+  },
+  {
+    "text": "门（通道、选择）",
+    "enabled": true
+  },
+  {
+    "text": "灯（发现、希望）",
+    "enabled": true
+  },
+  {
+    "text": "钟（时间）",
+    "enabled": true
+  },
+  {
+    "text": "纸（书写、记载）",
+    "enabled": true
+  },
+  {
+    "text": "骨（久远的记忆或身体疤痕）",
+    "enabled": true
+  },
+  {
+    "text": "绳（牵连、束缚、BDSM）",
+    "enabled": true
+  },
+  {
+    "text": "羽（轻盈、灵魂、飞）",
+    "enabled": true
+  },
+  {
+    "text": "伞（保护、遮蔽、天气）",
+    "enabled": true
+  },
+  {
+    "text": "雨（忧郁、洗、天气）",
+    "enabled": true
+  },
+  {
+    "text": "雪（冷、沉静、沉默）",
+    "enabled": true
+  },
+  {
+    "text": "桥（连接、过渡）",
+    "enabled": true
+  },
+  {
+    "text": "井（深处、回声）",
+    "enabled": true
+  },
+  {
+    "text": "线（命运、脉络、链接）",
+    "enabled": true
+  },
+  {
+    "text": "血（情感深处或伤痕）",
+    "enabled": true
+  },
+  {
+    "text": "书（知识、记忆）",
+    "enabled": true
+  },
+  {
+    "text": "自己的房间（庇护所、精神归宿）",
+    "enabled": true
+  },
+  {
+    "text": "钟摆（反复、动摇）",
+    "enabled": true
+  },
+  {
+    "text": "镜框（对记忆的定格、固定的一段记忆）",
+    "enabled": true
+  },
+  {
+    "text": "木偶（被动、分离）",
+    "enabled": true
+  },
+  {
+    "text": "灰（过去、残留）",
+    "enabled": true
+  },
+  {
+    "text": "缝（破损、裂痕）",
+    "enabled": true
+  },
+  {
+    "text": "手帕（眼泪、记忆）",
+    "enabled": true
+  },
+  {
+    "text": "围墙（防御、隔离）",
+    "enabled": true
+  },
+  {
+    "text": "门缝（窥探、没开始）",
+    "enabled": true
+  },
+  {
+    "text": "影（残像、遗留）",
+    "enabled": true
+  },
+  {
+    "text": "床（吃苹果、性关系、睡觉、身体）",
+    "enabled": true
+  },
+  {
+    "text": "梯子（有所求、更进一步）",
+    "enabled": true
+  },
+  {
+    "text": "窗（视野、界限）",
+    "enabled": true
+  },
+  {
+    "text": "指环（承诺、誓言）",
+    "enabled": true
+  },
+  {
+    "text": "墓（死亡、告别、封存）",
+    "enabled": true
+  },
+  {
+    "text": "烟（迷雾、不确定）",
+    "enabled": true
+  },
+  {
+    "text": "香（玄学）",
+    "enabled": true
+  },
+  {
+    "text": "线香（轻度的玄学、游戏性质的玄学、工具）",
+    "enabled": true
+  },
+  {
+    "text": "眼（注视、回应）",
+    "enabled": true
+  },
+  {
+    "text": "顾虑（挂念）",
+    "enabled": true
+  },
+  {
+    "text": "保护",
+    "enabled": true
+  },
+  {
+    "text": "曾发誓",
+    "enabled": true
+  },
+  {
+    "text": "还生气",
+    "enabled": true
+  },
+  {
+    "text": "对不起",
+    "enabled": true
+  },
+  {
+    "text": "愧疚",
+    "enabled": true
+  },
+  {
+    "text": "怕你误解",
+    "enabled": true
+  },
+  {
+    "text": "太晚了（错过）",
+    "enabled": true
+  },
+  {
+    "text": "来不及",
+    "enabled": true
+  },
+  {
+    "text": "没说完",
+    "enabled": true
+  },
+  {
+    "text": "放不下（舍不得）",
+    "enabled": true
+  },
+  {
+    "text": "想弥补",
+    "enabled": true
+  },
+  {
+    "text": "为了你",
+    "enabled": true
+  },
+  {
+    "text": "被牵制（受限制）",
+    "enabled": true
+  },
+  {
+    "text": "无法靠近",
+    "enabled": true
+  },
+  {
+    "text": "另一个人",
+    "enabled": true
+  },
+  {
+    "text": "因果（业力或命运）",
+    "enabled": true
+  },
+  {
+    "text": "非我决定",
+    "enabled": true
+  },
+  {
+    "text": "时间未到（时机不成熟）",
+    "enabled": true
+  },
+  {
+    "text": "依然爱",
+    "enabled": true
+  },
+  {
+    "text": "尚未结束",
+    "enabled": true
+  },
+  {
+    "text": "未清偿（恩怨或誓约有待偿还）",
+    "enabled": true
+  },
+  {
+    "text": "通道未开",
+    "enabled": true
+  },
+  {
+    "text": "命定如此（命运安排）",
+    "enabled": true
+  },
+  {
+    "text": "正在修行（处于成长或过渡阶段）",
+    "enabled": true
+  },
+  {
+    "text": "能量不足",
+    "enabled": true
+  },
+  {
+    "text": "被阻断",
+    "enabled": true
+  },
+  {
+    "text": "等待",
+    "enabled": true
+  },
+  {
+    "text": "钱的问题",
+    "enabled": true
+  },
+  {
+    "text": "始",
+    "enabled": true
+  },
+  {
+    "text": "终",
+    "enabled": true
+  },
+  {
+    "text": "病",
+    "enabled": true
+  },
+  {
+    "text": "伤",
+    "enabled": true
+  },
+  {
+    "text": "药（修复、干预、调理）",
+    "enabled": true
+  },
+  {
+    "text": "去（离开、终止）",
+    "enabled": true
+  },
+  {
+    "text": "留（停留、持续）",
+    "enabled": true
+  },
+  {
+    "text": "变",
+    "enabled": true
+  },
+  {
+    "text": "合（结合、靠近、和解）",
+    "enabled": true
+  },
+  {
+    "text": "断",
+    "enabled": true
+  },
+  {
+    "text": "缘",
+    "enabled": true
+  },
+  {
+    "text": "债",
+    "enabled": true
+  },
+  {
+    "text": "劫（冲击、试炼）",
+    "enabled": true
+  },
+  {
+    "text": "印（痕迹、烙印）",
+    "enabled": true
+  },
+  {
+    "text": "咒",
+    "enabled": true
+  },
+  {
+    "text": "重来（再起、轮回）",
+    "enabled": true
+  },
+  {
+    "text": "未完",
+    "enabled": true
+  },
+  {
+    "text": "选",
+    "enabled": true
+  },
+  {
+    "text": "误",
+    "enabled": true
+  },
+  {
+    "text": "迟（时机已过或将错过）",
+    "enabled": true
+  },
+  {
+    "text": "早（时机需提前）",
+    "enabled": true
+  },
+  {
+    "text": "换",
+    "enabled": true
+  },
+  {
+    "text": "等",
+    "enabled": true
+  },
+  {
+    "text": "散（解散或松动）",
+    "enabled": true
+  },
+  {
+    "text": "回避",
+    "enabled": true
+  },
+  {
+    "text": "回避",
+    "enabled": true
+  },
+  {
+    "text": "藏",
+    "enabled": true
+  },
+  {
+    "text": "见",
+    "enabled": true
+  },
+  {
+    "text": "求",
+    "enabled": true
+  },
+  {
+    "text": "是",
+    "enabled": true
+  },
+  {
+    "text": "不是",
+    "enabled": true
+  },
+  {
+    "text": "可能",
+    "enabled": true
+  },
+  {
+    "text": "不确定",
+    "enabled": true
+  },
+  {
+    "text": "也许",
+    "enabled": true
+  },
+  {
+    "text": "因为",
+    "enabled": true
+  },
+  {
+    "text": "所以",
+    "enabled": true
+  },
+  {
+    "text": "但是",
+    "enabled": true
+  },
+  {
+    "text": "可以（存在余地）",
+    "enabled": true
+  },
+  {
+    "text": "不当",
+    "enabled": true
+  },
+  {
+    "text": "只是（有保留）",
+    "enabled": true
+  },
+  {
+    "text": "刚刚",
+    "enabled": true
+  },
+  {
+    "text": "以后",
+    "enabled": true
+  },
+  {
+    "text": "已经",
+    "enabled": true
+  },
+  {
+    "text": "再一次",
+    "enabled": true
+  },
+  {
+    "text": "别（不适合或难）",
+    "enabled": true
+  },
+  {
+    "text": "要紧（重要）",
+    "enabled": true
+  },
+  {
+    "text": "无妨（无害或可接受）",
+    "enabled": true
+  },
+  {
+    "text": "不用说（无需解释）",
+    "enabled": true
+  },
+  {
+    "text": "还不知道",
+    "enabled": true
+  },
+  {
     "text": "你",
     "enabled": true
   },
