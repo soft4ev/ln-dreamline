@@ -904,6 +904,12 @@
             const dir = dirEl ? dirEl.value.trim() : "";
             const type = ["硬币", "掷筊", "抽签"][state.destinyTab];
             const msg = dir ? `${dir}\n我使用了【${type}】：${state.lastDestinyResult}` : `我使用了【${type}】：${state.lastDestinyResult}`;
+            
+            if (state.settings.sound && MESSAGE_SOUND_BASE64) {
+                audioMessage.currentTime = 0;
+                audioMessage.play().catch(()=>{});
+            }
+            
             addMessage(msg, 'right');
             goBack();
             requestReplySet();
