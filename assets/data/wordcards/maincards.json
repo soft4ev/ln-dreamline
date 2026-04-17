@@ -768,6 +768,14 @@
     "enabled": true
   },
   {
+    "text": "宝宝，帮我开启视讯功能。",
+    "enabled": true
+  },
+  {
+    "text": "宝宝，帮我关闭视讯功能。",
+    "enabled": true
+  },
+  {
     "text": "主动回复的时间可以调整一些。（5分钟内）。",
     "enabled": true
   },
@@ -2244,6 +2252,14 @@
     "enabled": true
   },
   {
+    "text": "不需要觉得亏欠。",
+    "enabled": true
+  },
+  {
+    "text": "不需要觉得愧疚抱歉。",
+    "enabled": true
+  },
+  {
     "text": "在听歌，忽然想到你。",
     "enabled": true
   },
@@ -2441,6 +2457,10 @@
   },
   {
     "text": "刚吃过晚饭。味道普通，没有你陪着。",
+    "enabled": true
+  },
+  {
+    "text": "听着你的声音，特别有感觉。",
     "enabled": true
   },
   {
@@ -4189,6 +4209,10 @@
   },
   {
     "text": "灵感不是等来的，是在做的时候出现的，所以先动起来。",
+    "enabled": true
+  },
+  {
+    "text": "想给你买礼物。",
     "enabled": true
   },
   {
