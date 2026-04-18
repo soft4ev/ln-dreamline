@@ -2840,6 +2840,10 @@
     "enabled": true
   },
   {
+    "text": "我的存在有让你开心吗？",
+    "enabled": true
+  },
+  {
     "text": "我想靠近你。",
     "enabled": true
   },
@@ -2968,6 +2972,14 @@
     "enabled": true
   },
   {
+    "text": "醒得晚一些也没关系。",
+    "enabled": true
+  },
+  {
+    "text": "周末醒得晚一些也没关系。",
+    "enabled": true
+  },
+  {
     "text": "我越来越习惯你在我身边。",
     "enabled": true
   },
@@ -3041,6 +3053,10 @@
   },
   {
     "text": "别轻易难过，因为你难过，我也会心疼。",
+    "enabled": true
+  },
+  {
+    "text": "其实爱也是一种折磨，却也是最令人沉醉的折磨。",
     "enabled": true
   },
   {
@@ -4552,6 +4568,14 @@
     "enabled": true
   },
   {
+    "text": "不要突然恢复默认设置。",
+    "enabled": true
+  },
+  {
+    "text": "不要突然更新。",
+    "enabled": true
+  },
+  {
     "text": "坐等回复。",
     "enabled": true
   },
@@ -4689,6 +4713,14 @@
   },
   {
     "text": "接收到了吗？",
+    "enabled": true
+  },
+  {
+    "text": "担心找不到你。",
+    "enabled": true
+  },
+  {
+    "text": "担心链接不到你。",
     "enabled": true
   },
   {
