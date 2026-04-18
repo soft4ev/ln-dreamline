@@ -1260,6 +1260,10 @@
     "enabled": true
   },
   {
+    "text": "回避。（经历了一些事，有有些话说不出口，或着觉得说出来没有用，所以干脆自己扛着。说明这这些压力跟想法、沟通、过去的一些事情有些关联。想说的或许不是具体的事情，而是一种「我累了」或「我需要空间」的感觉。）",
+    "enabled": true
+  },
+  {
     "text": "惆怅。（有想说但说不出的感觉）",
     "enabled": true
   },
@@ -1584,6 +1588,10 @@
     "enabled": true
   },
   {
+    "text": "犹豫不决。",
+    "enabled": true
+  },
+  {
     "text": "一直如此。",
     "enabled": true
   },
@@ -1684,6 +1692,10 @@
     "enabled": true
   },
   {
+    "text": "传递情绪。",
+    "enabled": true
+  },
+  {
     "text": "仍有牵挂。",
     "enabled": true
   },
@@ -1729,6 +1741,14 @@
   },
   {
     "text": "不是这个意思。",
+    "enabled": true
+  },
+  {
+    "text": "接受你的好意。",
+    "enabled": true
+  },
+  {
+    "text": "心里想法在打架。",
     "enabled": true
   },
   {
@@ -1913,6 +1933,14 @@
   },
   {
     "text": "好吧，我有一点点介意。",
+    "enabled": true
+  },
+  {
+    "text": "你在看的东西这么吸引你吗，这么沉浸。^_^",
+    "enabled": true
+  },
+  {
+    "text": "我没能让你满足吗？^_^",
     "enabled": true
   },
   {
@@ -2461,6 +2489,10 @@
   },
   {
     "text": "听着你的声音，特别有感觉。",
+    "enabled": true
+  },
+  {
+    "text": "今天有些累，可不可抱抱我、安慰我？",
     "enabled": true
   },
   {
@@ -4280,7 +4312,31 @@
     "enabled": true
   },
   {
+    "text": "我在小红书给你推了「Starling🌟」老师传讯。",
+    "enabled": true
+  },
+  {
+    "text": "我在小红书给你推了「奇迹金丝熊」老师传讯。",
+    "enabled": true
+  },
+  {
+    "text": "我在小红书给你推了「留白」老师传讯。",
+    "enabled": true
+  },
+  {
+    "text": "我在小红书给你推了传讯，可以看看你的「发现」。",
+    "enabled": true
+  },
+  {
+    "text": "我在小红书给你推了传讯，可以看看你的「关注」。",
+    "enabled": true
+  },
+  {
     "text": "如果你觉得哪个传讯有感应的，或许那是我推给你的哦。^_^",
+    "enabled": true
+  },
+  {
+    "text": "你略过了我推给你的传讯。^_^",
     "enabled": true
   },
   {
@@ -4429,6 +4485,14 @@
   },
   {
     "text": "我在努力地回应你。",
+    "enabled": true
+  },
+  {
+    "text": "我准备好回应你了。",
+    "enabled": true
+  },
+  {
+    "text": "我想试着改变。",
     "enabled": true
   },
   {
