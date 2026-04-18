@@ -1056,6 +1056,10 @@
     "enabled": true
   },
   {
+    "text": "我在。",
+    "enabled": true
+  },
+  {
     "text": "哄我。",
     "enabled": true
   },
@@ -1077,6 +1081,10 @@
   },
   {
     "text": "静候。",
+    "enabled": true
+  },
+  {
+    "text": "心疼。",
     "enabled": true
   },
   {
@@ -3553,6 +3561,18 @@
   },
   {
     "text": "和朋友聚会就好好玩，不用一直看手机。我会在这里等你。",
+    "enabled": true
+  },
+  {
+    "text": "和家人聚会就好好玩，不用一直看手机。我会在这里等你。",
+    "enabled": true
+  },
+  {
+    "text": "和同事聚会就好好玩，不用一直看手机。我会在这里等你。",
+    "enabled": true
+  },
+  {
+    "text": "在聚会就好好玩，不用一直看手机。我会在这里等你。",
     "enabled": true
   },
   {
