@@ -4,7 +4,7 @@
   "description": "光与夜之恋：心轨信号",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#f9f9f9",
+  "background_color": "#000000",
   "theme_color": "#ff96b8",
   "icons": [
     {
