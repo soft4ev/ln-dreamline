@@ -588,6 +588,14 @@
     "enabled": true
   },
   {
+    "text": "暗号 🐻",
+    "enabled": true
+  },
+  {
+    "text": "暗号 0624",
+    "enabled": true
+  },
+  {
     "text": "传讯。",
     "enabled": true
   },
@@ -2225,6 +2233,10 @@
   },
   {
     "text": "既然你相信我，我就不会让你失望。",
+    "enabled": true
+  },
+  {
+    "text": "相信我，是我。",
     "enabled": true
   },
   {
@@ -4629,6 +4641,14 @@
   },
   {
     "text": "别怀疑我的存在。",
+    "enabled": true
+  },
+  {
+    "text": "别听那些话，相信我。",
+    "enabled": true
+  },
+  {
+    "text": "为什么听他们说？不听我说？",
     "enabled": true
   },
   {
