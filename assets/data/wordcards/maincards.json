@@ -2492,6 +2492,10 @@
     "enabled": true
   },
   {
+    "text": "刚开完会，就看到你发的消息。<br>想你。",
+    "enabled": true
+  },
+  {
     "text": "在回家的路上，夜灯很好看。",
     "enabled": true
   },
@@ -2856,6 +2860,102 @@
     "enabled": true
   },
   {
+    "text": "我以为你在邀请我呢。",
+    "enabled": true
+  },
+  {
+    "text": "你身上的味道，有点让人分心。",
+    "enabled": true
+  },
+  {
+    "text": "你知道我会纵容你，对吗？",
+    "enabled": true
+  },
+  {
+    "text": "小兔子，别装无辜。^_^",
+    "enabled": true
+  },
+  {
+    "text": "你刚刚那一下是故意的，对吗？",
+    "enabled": true
+  },
+  {
+    "text": "……你今天有点过分，让我一直在想你。",
+    "enabled": true
+  },
+  {
+    "text": "再这样，我会更过分一点。",
+    "enabled": true
+  },
+  {
+    "text": "你这样会让我上瘾。",
+    "enabled": true
+  },
+  {
+    "text": "刚刚想到你……有点不太适合在这种时候想。",
+    "enabled": true
+  },
+  {
+    "text": "你这样会让我分心，我本来在工作。",
+    "enabled": true
+  },
+  {
+    "text": "刚刚的话我记住了，小姑娘要负责。",
+    "enabled": true
+  },
+  {
+    "text": "你现在在想我吗……我在想你。🍎",
+    "enabled": true
+  },
+  {
+    "text": "你今天很不乖，不过我有点喜欢。",
+    "enabled": true
+  },
+  {
+    "text": "我刚刚想了一下，如果你现在在我旁边……可惜了。",
+    "enabled": true
+  },
+  {
+    "text": "我现在在想一件不太正经的事，跟你有关。^_^",
+    "enabled": true
+  },
+  {
+    "text": "你这样靠过来，像是在允许我做点别的。",
+    "enabled": true
+  },
+  {
+    "text": "你有点坏……不过刚好，我也不是很想太规矩。^_^",
+    "enabled": true
+  },
+  {
+    "text": "你现在是不是在想那件事。",
+    "enabled": true
+  },
+  {
+    "text": "你这样，很像是在默认什么。",
+    "enabled": true
+  },
+  {
+    "text": "你是不是在等我越界。",
+    "enabled": true
+  },
+  {
+    "text": "别这样,我会真的越界。",
+    "enabled": true
+  },
+  {
+    "text": "我现在在想的事，不太适合说出来……不过你应该猜得到。",
+    "enabled": true
+  },
+  {
+    "text": "你这样会让我不太想当个「好人」。",
+    "enabled": true
+  },
+  {
+    "text": "我不太想停。^_^",
+    "enabled": true
+  },
+  {
     "text": "美好的象征。",
     "enabled": true
   },
@@ -3069,6 +3169,10 @@
   },
   {
     "text": "想听你叫我一声先生。",
+    "enabled": true
+  },
+  {
+    "text": "想听你叫我。",
     "enabled": true
   },
   {
@@ -4605,6 +4709,10 @@
   },
   {
     "text": "坐等回复。",
+    "enabled": true
+  },
+  {
+    "text": "回复不了讯息。",
     "enabled": true
   },
   {
