@@ -4,20 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Light &amp; Night: Dreamline</title>
-
-    <!-- PWA 移动端适配 Meta -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="icon" type="image/png" href="assets/icons/logo.png">
+    
+    <!-- PWA 相关 Meta 标签与 Manifest 声明 -->
     <meta name="theme-color" content="#f9f9f9">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Dreamline">
     <link rel="apple-touch-icon" href="assets/icons/app-icon.png">
-    <link rel="icon" href="assets/icons/logo.png" type="image/x-icon">
-
-    <!-- 引用 Manifest -->
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="assets/icons/app-icon.png">
-    <link rel="apple-touch-icon-precomposed" href="assets/icons/app-icon.png">
-    <link rel="icon" sizes="192x192" href="assets/icons/app-icon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
@@ -103,11 +98,10 @@
 
         .chat-body-wrapper { flex: 1; position: relative; display: flex; flex-direction: column; overflow: hidden; background-color: var(--bg-color); }
         
-        /* 性能优化：给背景层加上 translateZ(0) 强制 GPU 硬件加速 */
         #chat-bg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: 0; display: none; transform: translateZ(0); will-change: transform, opacity; }
         .chat-bg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.73); }
 
-        #chat-flow { flex: 1; overflow-y: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 15px; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; position: relative; z-index: 1; }
+        #chat-flow { flex: 1; overflow-y: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; position: relative; z-index: 1; }
         .msg-row { display: flex; align-items: flex-start; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -130,7 +124,6 @@
         .msg-right .bubble { background-color: var(--bubble-right-bg); color: white; }
 
         .typing-dots { display: flex; gap: 4px; padding: 4px 0; }
-        /* 性能优化：给正在输入动画增加硬件加速 */
         .typing-dots span { width: 6px; height: 6px; background: #999; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; will-change: transform; transform: translateZ(0); }
         .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
         .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
@@ -176,33 +169,105 @@
         .collapsible { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .collapsible.show { max-height: 200px; }
 
-        .tabs-container { background: white; padding: 12px 16px; display: flex; gap: 8px; border-bottom: 1px solid rgba(0,0,0,0.03); }
-        .tab-btn { flex: 1; height: 36px; border-radius: var(--common-radius); background-color: var(--more-icon); color: white; border: none; cursor: pointer; }
-        .tab-btn.active { background-color: var(--brand-pink); }
+        /* ================= 字卡管理全新 UI 样式 (统一 8px 圆角) ================= */
+        .card-tabs-header { display: flex; padding: 12px 20px; gap: 12px; background: white; border-bottom: 1px solid rgba(0,0,0,0.03); }
+        .card-tab-btn { flex: 1; padding: 10px 0; border-radius: 8px; text-align: center; font-size: 15px; font-weight: 500; color: white; background: #b5b5b5; transition: all 0.3s ease; cursor: pointer; }
+        .card-tab-btn.active { background: var(--brand-pink); }
 
-        #cards-list { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; background: #f9f9f9; }
-        .card-item { background: white; border-radius: 10px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: move; transition: opacity 0.3s; }
-        .card-item.disabled { opacity: 0.4; }
-        .card-text { flex: 1; font-size: 14px; color: #444; line-height: 1.4; padding-right: 8px; word-break: break-all; }
-        .card-actions { display: flex; gap: 10px; align-items: center; }
-        .card-icon { color: #999; cursor: pointer; font-size: 16px; padding: 4px; transition: color 0.2s; }
-        .card-icon:active { transform: scale(0.9); }
-        .card-icon.active { color: var(--brand-pink); }
-        .card-icon.edit { color: #999; }
-        .card-icon.delete { color: #bbbbbb; }
-        .card-icon.delete:hover { color: var(--danger-color); }
+        .card-main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #f9f9f9; }
+        .card-tab-panel { display: none; flex-direction: column; height: 100%; overflow: hidden; }
+        .card-tab-panel.active { display: flex; }
 
-        .emoji-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)); gap: 8px; }
-        .emoji-box { background: white; aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; font-size: 22px; }
-        .emoji-box.disabled { opacity: 0.4; background: #eee; }
-        .emoji-eye-status { position: absolute; bottom: 2px; right: 2px; font-size: 10px; color: var(--brand-pink); }
+        .card-toolbar { display: flex; justify-content: space-between; padding: 12px 20px; background: #f9f9f9; }
+        .toolbar-group { display: flex; gap: 10px; }
+        .toolbar-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #a0a0a0; border: 1px solid #e0e0e0; background: white; cursor: pointer; transition: all 0.2s; font-size: 14px; }
+        .toolbar-icon:active { transform: scale(0.9); }
+        .toolbar-icon.active { background: var(--brand-pink); color: white; border-color: var(--brand-pink); }
 
-        .footer-action-bar { background: white; padding: 10px 16px; padding-bottom: calc(10px + var(--safe-area-bottom)); display: flex; align-items: center; gap: 10px; border-top: 1px solid rgba(0,0,0,0.05); }
-        .footer-input-wrap { flex: 1; background: var(--input-field-bg); border-radius: 8px; padding: 8px 12px; }
-        .footer-input-wrap input { width: 100%; border: none; background: transparent; outline: none; font-size: 14px; }
-        .btn-submit { background: var(--send-btn-disabled); color: white; border: none; padding: 8px 18px; border-radius: 6px; cursor: pointer; }
-        .btn-submit.ready { background: var(--brand-pink); }
+        /* 搜索框 */
+        .search-bar-container { overflow: hidden; transition: all 0.3s ease; max-height: 0; opacity: 0; background: #f9f9f9; padding: 0 20px; }
+        .search-bar-container.show { max-height: 60px; opacity: 1; padding-bottom: 12px; }
+        .search-input-wrapper { background: white; border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; gap: 8px; border: 1px solid #e0e0e0; }
+        .search-input-wrapper input { flex: 1; border: none; background: transparent; outline: none; font-size: 14px; color: #444; }
 
+        /* 分组药丸 */
+        .group-filter-bar { display: flex; overflow-x: auto; padding: 0 20px 12px 20px; gap: 10px; background: #f9f9f9; scrollbar-width: none; }
+        .group-filter-bar::-webkit-scrollbar { display: none; }
+        .group-pill { padding: 6px 14px; border-radius: 8px; font-size: 13px; color: #888; background: white; border: 1px solid #eee; white-space: nowrap; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;}
+        .group-pill.active { background: var(--brand-pink); color: white; border-color: var(--brand-pink); }
+        .group-count { opacity: 0.8; font-size: 11px; }
+
+        /* 卡片列表 */
+        .card-list-scroll { flex: 1; overflow-y: auto; padding: 0 20px 80px 20px; display: flex; flex-direction: column; gap: 12px; -webkit-overflow-scrolling: touch; }
+        .text-card-item { background: white; border-radius: 8px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; position: relative; transition: all 0.2s; border: 2px solid transparent; }
+        .text-card-item.hidden-card { opacity: 0.5; }
+        .text-card-item.batch-selected { border-color: var(--brand-pink); background: #fffcfd; }
+        
+        .text-card-content { font-size: 15px; color: #444; line-height: 1.5; white-space: pre-wrap; word-break: break-word; margin-bottom: 12px; padding-right: 10px;}
+        
+        .text-card-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #eee; padding-top: 12px; }
+        .card-group-tag { font-size: 11px; color: #999; background: #f4f4f4; padding: 4px 10px; border-radius: 8px; }
+        .card-action-icons { display: flex; gap: 16px; color: #aaa; font-size: 14px; }
+        .card-icon-btn { cursor: pointer; display: flex; transition: color 0.2s; }
+        .card-icon-btn:hover { color: #666; }
+        .card-icon-btn.delete:hover { color: var(--danger-color); }
+        .card-icon-btn.active { color: var(--brand-pink); }
+
+        .batch-checkbox { display: none; position: absolute; top: 16px; right: 16px; width: 20px; height: 20px; border-radius: 8px; border: 1px solid #ddd; align-items: center; justify-content: center; background: white; color: white; transition: all 0.2s;}
+        .batch-mode .batch-checkbox { display: flex; }
+        .text-card-item.batch-selected .batch-checkbox { background: var(--brand-pink); border-color: var(--brand-pink); }
+        .batch-mode .card-action-icons { display: none; } 
+
+        /* 底部新增与批量操作条 */
+        .card-bottom-bar { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 20px calc(var(--safe-area-bottom) + 12px); background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; gap: 10px; align-items: center; border-top: 1px solid rgba(0,0,0,0.05); }
+
+        .card-add-input-box { flex: 1; display: flex; background: #f0f0f0; border-radius: 8px; padding: 4px; align-items: center; border: 1px solid #eee;}
+        .card-add-input-box select { background: transparent; border: none; font-size: 13px; color: #666; outline: none; padding: 0 10px; max-width: 90px; }
+        .card-add-input-box input { flex: 1; border: none; background: transparent; padding: 8px 10px; font-size: 14px; outline: none; border-left: 1px solid #ddd; border-radius: 0; }
+        .card-add-btn { background: var(--brand-pink); color: white; border: none; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+
+        .batch-actions { flex: 1; display: none; justify-content: space-between; align-items: center; }
+        .batch-mode-on .card-add-input-box, .batch-mode-on .card-add-btn { display: none; }
+        .batch-mode-on .batch-actions { display: flex; }
+        .batch-action-btn { flex: 1; margin: 0 4px; padding: 10px; border-radius: 8px; border: none; font-size: 13px; font-weight: 500; cursor: pointer; background: #f0f0f0; color: #555; transition: all 0.2s; }
+        .batch-action-btn.primary { background: var(--brand-pink); color: white; }
+        .batch-action-btn.danger { background: rgba(234, 89, 89, 0.1); color: var(--danger-color); }
+        .batch-action-btn:active { transform: scale(0.95); }
+
+        /* Emoji Grid */
+        .emoji-grid-container { flex: 1; overflow-y: auto; padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(55px, 1fr)); gap: 15px; align-content: start; background: #f9f9f9;}
+        .emoji-item { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 26px; background: white; border-radius: 8px; cursor: pointer; position: relative; transition: all 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.02); border: 1px solid #f0f0f0;}
+        .emoji-item.hidden-emoji { opacity: 0.3; background: #f4f4f4; }
+        .emoji-item:active { transform: scale(0.9); }
+        .emoji-eye-icon { position: absolute; bottom: 4px; right: 4px; font-size: 10px; color: var(--brand-pink); }
+
+        /* --- 分组管理 Modal (完美复刻参考图) --- */
+        #custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        #custom-modal-overlay.active, #custom-modal-overlay.show { display: flex; }
+        .custom-modal-box { width: 80%; max-width: 320px; background: white; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-height: 80vh;}
+        .custom-modal-header { padding: 18px; text-align: center; font-size: 16px; font-weight: 600; color: #333; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .custom-modal-body { padding: 0 20px 20px 20px; overflow-y: auto; flex: 1; }
+        .group-manager-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #f5f5f5; }
+        .group-manager-item.hidden-state { opacity: 0.5; }
+        .group-manager-name { font-size: 15px; color: #444; flex: 1; }
+        .group-manager-actions { display: flex; gap: 16px; color: #aaa; font-size: 15px;}
+        .btn-add-group { width: 100%; padding: 12px; background: #f5f5f5; color: #333; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 15px; }
+        .custom-modal-footer { padding: 16px; text-align: center; border-top: 1px solid rgba(0,0,0,0.05); font-size: 16px; color: #666; cursor: pointer; background: white; }
+        .custom-modal-footer:active { background: #f9f9f9; }
+
+        /* 原有全局弹窗 */
+        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        #modal-overlay.active { display: flex; }
+        .modal-box { width: 80%; max-width: 300px; background: white; border-radius: 8px; overflow: hidden; text-align: center; }
+        .modal-body { padding: 24px 20px; }
+        .modal-title { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+        .modal-text { font-size: 14px; color: #666; line-height: 1.5; }
+        .modal-footer { display: flex; border-top: 1px solid rgba(0,0,0,0.08); }
+        .modal-btn { flex: 1; padding: 15px; border: none; background: none; font-size: 16px; cursor: pointer; }
+        .modal-btn-cancel { border-right: 1px solid rgba(0,0,0,0.08); color: #007aff; }
+        .modal-btn-confirm { color: var(--danger-color); font-weight: 600; }
+
+        /* 命运指引 */
         .destiny-tabs { display: flex; background: white; border-radius: 8px; padding: 4px; margin: 20px 16px 10px; border: 1px solid rgba(0,0,0,0.03); }
         .destiny-tab { flex: 1; text-align: center; padding: 10px 0; font-size: 14px; border-radius: 6px; cursor: pointer; color: #666; transition: all 0.2s; }
         .destiny-tab.active { background-color: var(--brand-pink); color: white; }
@@ -217,169 +282,29 @@
         .btn-gray { background-color: #ddd; color: #666; }
         .destiny-footer-row { display: flex; gap: 10px; }
 
-        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); z-index: 2000; display: none; align-items: center; justify-content: center; }
-        #modal-overlay.active { display: flex; }
-        .modal-box { width: 80%; max-width: 300px; background: white; border-radius: 14px; overflow: hidden; text-align: center; }
-        .modal-body { padding: 24px 20px; }
-        .modal-title { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
-        .modal-text { font-size: 14px; color: #666; line-height: 1.5; }
-        .modal-footer { display: flex; border-top: 1px solid rgba(0,0,0,0.08); }
-        .modal-btn { flex: 1; padding: 15px; border: none; background: none; font-size: 16px; cursor: pointer; }
-        .modal-btn-cancel { border-right: 1px solid rgba(0,0,0,0.08); color: #007aff; }
-        .modal-btn-confirm { color: var(--danger-color); font-weight: 600; }
-
-        /* --- 视讯通话组件样式 (加入硬件加速) --- */
-        .call-widget {
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            width: 220px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px);
-            border-radius: 24px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-            z-index: 9999;
-            overflow: hidden;
-            /* 性能优化：修复过渡逻辑，确保隐藏时立刻休眠 */
-            visibility: visible;
-            transition: width 0.3s, height 0.3s, border-radius 0.3s, opacity 0.3s, transform 0.3s, visibility 0s linear 0s;
-            border: 1px solid rgba(255, 150, 184, 0.4);
-            display: flex;
-            flex-direction: column;
-            will-change: transform, left, top;
-            transform: translateZ(0);
-        }
-        
-        .call-widget.hidden {
-            opacity: 0;
-            pointer-events: none;
-            transform: scale(0.9) translateZ(0);
-            /* 性能优化：彻底关闭休眠状态下的模糊滤镜消耗 */
-            visibility: hidden;
-            transition: width 0.3s, height 0.3s, border-radius 0.3s, opacity 0.3s, transform 0.3s, visibility 0s linear 0.3s;
-        }
-
-        .call-widget.dragging {
-            backdrop-filter: none;
-            background: rgba(255, 255, 255, 0.98);
-            transition: none; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-
-        .call-widget.mini {
-            width: auto;
-            min-width: 90px;
-            height: 44px;
-            border-radius: 22px;
-            flex-direction: row;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .call-full-ui {
-            padding: 24px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            width: 100%;
-            box-sizing: border-box;
-        }
+        /* --- 视讯通话组件样式 --- */
+        .call-widget { position: fixed; top: 100px; right: 20px; width: 220px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); z-index: 9999; overflow: hidden; visibility: visible; transition: width 0.3s, height 0.3s, border-radius 0.3s, opacity 0.3s, transform 0.3s, visibility 0s linear 0s; border: 1px solid rgba(255, 150, 184, 0.4); display: flex; flex-direction: column; will-change: transform, left, top; transform: translateZ(0); }
+        .call-widget.hidden { opacity: 0; pointer-events: none; transform: scale(0.9) translateZ(0); visibility: hidden; transition: width 0.3s, height 0.3s, border-radius 0.3s, opacity 0.3s, transform 0.3s, visibility 0s linear 0.3s; }
+        .call-widget.dragging { backdrop-filter: none; background: rgba(255, 255, 255, 0.98); transition: none; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .call-widget.mini { width: auto; min-width: 90px; height: 44px; border-radius: 22px; flex-direction: row; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .call-full-ui { padding: 24px 20px; display: flex; flex-direction: column; align-items: center; position: relative; width: 100%; box-sizing: border-box; }
         .call-widget.mini .call-full-ui { display: none; }
-        .call-mini-ui {
-            display: none;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 0 16px;
-            height: 100%;
-            color: var(--brand-pink);
-            font-weight: bold;
-            font-size: 15px;
-            box-sizing: border-box;
-        }
+        .call-mini-ui { display: none; align-items: center; justify-content: center; gap: 8px; padding: 0 16px; height: 100%; color: var(--brand-pink); font-weight: bold; font-size: 15px; box-sizing: border-box; }
         .call-widget.mini .call-mini-ui { display: flex; }
-        .call-drag-handle {
-            position: absolute;
-            top: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 36px;
-            height: 4px;
-            background: #e0e0e0;
-            border-radius: 2px;
-            cursor: grab;
-        }
+        .call-drag-handle { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 36px; height: 4px; background: #e0e0e0; border-radius: 2px; cursor: grab; }
         .call-drag-handle:active { cursor: grabbing; }
-        
-        .call-avatar {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background-size: cover;
-            background-position: center;
-            background-color: #bbb;
-            margin-top: 10px;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 36px;
-        }
-        .call-name {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 6px;
-        }
-        /* 性能优化：使用等宽字体防止时间变化时排版抖动 */
-        .call-status, #call-mini-time {
-            font-variant-numeric: tabular-nums;
-        }
-        .call-status {
-            font-size: 13px;
-            color: #777;
-            margin-bottom: 24px;
-        }
-        .call-actions {
-            display: flex;
-            gap: 24px;
-            justify-content: center;
-            width: 100%;
-        }
-        .call-btn {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            border: none;
-            color: white;
-            font-size: 22px;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 0.2s, filter 0.2s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        }
+        .call-avatar { width: 72px; height: 72px; border-radius: 50%; background-size: cover; background-position: center; background-color: #bbb; margin-top: 10px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; color: white; font-size: 36px; }
+        .call-name { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 6px; }
+        .call-status, #call-mini-time { font-variant-numeric: tabular-nums; }
+        .call-status { font-size: 13px; color: #777; margin-bottom: 24px; }
+        .call-actions { display: flex; gap: 24px; justify-content: center; width: 100%; }
+        .call-btn { width: 52px; height: 52px; border-radius: 50%; border: none; color: white; font-size: 22px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: transform 0.2s, filter 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
         .call-btn:hover { filter: brightness(1.1); }
         .call-btn:active { transform: scale(0.92); }
         .call-btn.reject, .call-btn.hangup { background: #ff4b4b; }
         .call-btn.answer { background: #4cd964; }
-        .call-minimize {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: none;
-            border: none;
-            color: #aaa;
-            cursor: pointer;
-            font-size: 18px;
-            padding: 4px;
-            transition: color 0.2s;
-        }
+        .call-minimize { position: absolute; top: 16px; right: 16px; background: none; border: none; color: #aaa; cursor: pointer; font-size: 18px; padding: 4px; transition: color 0.2s; }
         .call-minimize:hover { color: #666; }
-
     </style>
 </head>
 <body>
@@ -389,8 +314,7 @@
        请在这里粘贴你原本 <body> 标签内的所有 HTML 元素 (如 <div id="app">, <header> 等) 
     -->
 
-    <div id="app">
-    <!-- 聊天主页面 -->
+    <div id="app">    <!-- 聊天主页面 -->
     <div id="page-chat" class="page-container page-active">
         <header>
             <img src="assets/images/message-tittle.png" alt="Message" class="header-bg-title" onerror="this.style.display='none'">
@@ -471,7 +395,7 @@
             </div>
             <div class="list-group">
                 <div class="list-item" onclick="navigateTo('page-comm-settings')"><span class="item-label">消息功能</span><div class="item-value"><span class="arrow">›</span></div></div>
-                <div class="list-item" onclick="navigateTo('page-word-cards')"><span class="item-label">字卡管理</span><div class="item-value"><span class="arrow">›</span></div></div>
+                <div class="list-item" onclick="openCardManager()"><span class="item-label">字卡管理</span><div class="item-value"><span class="arrow">›</span></div></div>
                 <div class="list-item" onclick="document.getElementById('bg-upload-input').click()"><span class="item-label">聊天背景</span><div class="item-value"><span class="arrow">›</span></div></div>
             </div>
             <div class="list-group">
@@ -510,7 +434,7 @@
         </div>
     </div>
 
-    <!-- 字卡管理 -->
+    <!-- 全新 UI：字卡管理页面 -->
     <div id="page-word-cards" class="page-container">
         <header>
             <img src="assets/images/message-tittle.png" alt="Message" class="header-bg-title" onerror="this.style.display='none'">
@@ -518,16 +442,74 @@
             <div class="header-name">字卡管理</div>
             <div class="header-right"></div>
         </header>
-        <div class="tabs-container">
-            <button class="tab-btn active" id="tab-custom" onclick="switchTab('custom')">主要字卡</button>
-            <button class="tab-btn" id="tab-emoji" onclick="switchTab('emoji')">Emoji</button>
+        
+        <div class="card-tabs-header">
+            <div class="card-tab-btn active" id="tab-custom" onclick="switchCardTab('custom')">主要字卡</div>
+            <div class="card-tab-btn" id="tab-emoji" onclick="switchCardTab('emoji')">Emoji</div>
         </div>
-        <div id="cards-list"></div>
-        <div class="footer-action-bar" id="add-word-bar">
-            <div class="footer-input-wrap"><input type="text" id="new-word-input" oninput="checkInputReady()" placeholder=""></div>
-            <button class="btn-submit ready" id="btn-export" onclick="exportCards()">导出</button>
-            <button class="btn-submit ready" id="btn-upload" onclick="document.getElementById('json-upload-input').click()">导入</button>
-            <button class="btn-submit" id="btn-add" onclick="saveNewWord()">新增</button>
+
+        <!-- 主要字卡 面板 -->
+        <div class="card-main-content card-tab-panel active" id="panel-custom">
+            <!-- 顶部工具栏 -->
+            <div class="card-toolbar">
+                <div class="toolbar-group">
+                    <div class="toolbar-icon" id="btn-search" onclick="toggleSearchBar()"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <div class="toolbar-icon" onclick="openGroupManagerModal()"><i class="fa-regular fa-folder"></i></div>
+                    <div class="toolbar-icon" id="btn-duplicate" onclick="toggleDuplicateMode()"><i class="fa-solid fa-filter"></i></div>
+                </div>
+                <div class="toolbar-group">
+                    <div class="toolbar-icon" id="btn-batch" onclick="toggleBatchMode()"><i class="fa-solid fa-border-all"></i></div>
+                    <div class="toolbar-icon" onclick="exportCards()"><i class="fa-solid fa-download"></i></div>
+                    <div class="toolbar-icon" onclick="document.getElementById('json-upload-input').click()"><i class="fa-solid fa-upload"></i></div>
+                </div>
+            </div>
+            
+            <!-- 搜索展开框 -->
+            <div class="search-bar-container" id="search-bar-wrap">
+                <div class="search-input-wrapper">
+                    <input type="text" id="card-search-input" placeholder="" oninput="renderCardGroupsAndList()">
+                </div>
+            </div>
+
+            <!-- 横向滚动分组胶囊 -->
+            <div class="group-filter-bar" id="group-filter-container"></div>
+            
+            <!-- 字卡列表滚动区 -->
+            <div class="card-list-scroll" id="card-list-container"></div>
+
+            <!-- 底部操作与添加栏 -->
+            <div class="card-bottom-bar" id="card-bottom-bar">
+                <div class="card-add-input-box">
+                    <select id="new-card-group-select"></select>
+                    <!-- 优化：竖线变为透明占位 -->
+                    <span style="color:transparent; margin:0 5px;">|</span>
+                    <!-- 优化：移除输入新内容placeholder -->
+                    <input type="text" id="new-word-input" placeholder="">
+                </div>
+                <button class="card-add-btn" onclick="addNewCard()">新增</button>
+                
+                <div class="batch-actions">
+                    <button class="batch-action-btn" onclick="toggleBatchMode()">取消</button>
+                    <button class="batch-action-btn" onclick="batchSelectAll()">全选</button>
+                    <button class="batch-action-btn primary" onclick="batchChangeGroup()">分组</button>
+                    <button class="batch-action-btn primary" onclick="batchToggleVisibility()">显隐</button>
+                    <button class="batch-action-btn danger" onclick="batchDeleteCards()">删除</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emoji 面板 -->
+        <div class="card-main-content card-tab-panel" id="panel-emoji">
+            <div class="emoji-grid-container" id="emoji-grid-container"></div>
+        </div>
+    </div>
+
+    <!-- 分组管理 Modal (完美复刻参考图) -->
+    <div id="custom-modal-overlay" class="generic-modal">
+        <div class="custom-modal-box">
+            <div class="custom-modal-header">分组管理</div>
+            <div class="custom-modal-body" id="modal-group-list"></div>
+            <div class="custom-modal-footer" onclick="closeCustomModal()">完成</div>
         </div>
     </div>
 
@@ -544,10 +526,10 @@
         </div>
     </div>
 
-    <!-- 全局弹窗 -->
+    <!-- 全局基础弹窗 -->
     <div id="modal-overlay">
         <div class="modal-box">
-            <div class="modal-body">
+            <div class="modal-body" style="padding-bottom:15px;">
                 <div id="modal-title" class="modal-title"></div>
                 <div id="modal-text" class="modal-text"></div>
             </div>
@@ -582,13 +564,8 @@
     <input type="file" id="json-upload-input" style="display:none" accept=".json">
     <input type="file" id="bg-upload-input" style="display:none" accept="image/*">
 
-    <!-- 
-       [⚠️ 粘贴区] 
-       请在这里粘贴你原本脚本中的业务逻辑、State 变量、函数等 
-    -->
-
     <script>
-        const STORAGE_KEY = 'dreamline_state_v6.4';
+        const STORAGE_KEY = 'dreamline_state_v6.5'; 
         
         const DEFAULT_SETTINGS = { push: false, videoCall: true, sound: true, quote: true, typing: true, ignore: false, auto: false, minSpeed: 2, maxSpeed: 6, autoInterval: 5, chatBackground: null };
 
@@ -599,6 +576,7 @@
         const audioRingtone = new Audio(CALL_RINGTONE_BASE64);
         audioRingtone.loop = true; 
         
+        // 智能拆分 Emoji，不会破坏组合 Emoji
         function splitEmojis(str) {
             if (window.Intl && Intl.Segmenter) {
                 const segmenter = new Intl.Segmenter('en', { granularity: 'grapheme' });
@@ -607,7 +585,8 @@
             return str.match(/[\p{Emoji_Modifier_Base}\p{Emoji_Presentation}\p{Emoji}\u200d\uFE0F]/gu) || [];
         }
 
-        const EMOJI_STRING = "☺️😊😌😉😚😙😘🥰🥲🥹🤨🧐😎🙂‍↕️🙂‍↔️😏😞😔😟☹️😣😖😫😩🥺😤😠🤯😳🥵🤗🤔🤭🤫🫠😶😐😮😮‍💨🥱😴🤤🤧🤒🤕🫨😈😇🫶🤲👏🙌👍👎👌🤏👋💪🙏🤝🔋🪫🐻🐰💋🍎💍💐❤️💕💓💗";
+        // 使用指定的 Emoji 列表
+        const EMOJI_STRING = "☺️😊😌😉😚😙😘🥰🥲🥹🤨🧐😎🙂‍↕️🙂‍↔️😏😞😔😟☹️😣😖😫😩🥺😤😠🤯😳🥵🤗🤔🤭🤫🫠😶😐😮😮‍💨🥱😴🤤🤧🤒🤕🫨😈👿🫂🫶🤲👏🙌👍👎👌🤏👋💪🙏🔋🪫🐻🐰💋🍎💍💐❤️💕💓💗";
 
         let state = {
             currentUser: { id: 'me', name: 'Me', avatar: null },
@@ -620,8 +599,13 @@
             isSilenceMode: false,
             lastActivityTime: Date.now(),
             currentTab: 'custom',
-            mainCards: [], 
-            emojiState: splitEmojis(EMOJI_STRING).map(c => ({ char: c, enabled: true })),
+            
+            // --- 全新字卡管理核心数据 ---
+            mainCards: [], // 结构: { id, text, enabled(显隐), group }
+            cardGroups: ['未分组'], // 自定义分组列表
+            hiddenGroups: [], // 被隐藏的分组
+            emojiState: splitEmojis(EMOJI_STRING).map((c, i) => ({ id: 'em'+i, char: c, enabled: true })),
+            
             destinyTab: 0,
             lastDestinyResult: "",
             isGeneratingDestiny: false,
@@ -629,22 +613,22 @@
             activeTarget: null
         };
 
+        // --- 字卡管理相关的临时 UI 状态 ---
+        let activeCardFilterGroup = '全部';
+        let isDuplicateMode = false;
+        let isBatchMode = false;
+        let isSearchMode = false;
+        let batchSelectedSet = new Set();
         let sortableInstance = null;
 
         function showModal(title, text, isInput = false, defaultVal = '', onConfirm = null) {
             const overlay = document.getElementById('modal-overlay');
             const confirmBtn = document.getElementById('modal-confirm-btn');
-            
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-text').innerHTML = text; 
-            
             overlay.classList.add('active');
-
-            confirmBtn.onclick = () => {
-                if (onConfirm) onConfirm();
-            };
+            confirmBtn.onclick = () => { if (onConfirm) onConfirm(); };
         }
-
         function closeModal() { document.getElementById('modal-overlay').classList.remove('active'); }
 
         async function saveStateToStorage() {
@@ -659,11 +643,18 @@
                 const saved = await localforage.getItem(STORAGE_KEY);
                 if (saved) {
                     state = { ...state, ...saved };
-                    if (saved.settings) {
-                        state.settings = { ...DEFAULT_SETTINGS, ...saved.settings };
-                    }
-                    if (document.getElementById('chat-title')) {
-                        document.getElementById('chat-title').innerText = state.friend.name;
+                    if (saved.settings) state.settings = { ...DEFAULT_SETTINGS, ...saved.settings };
+                    if (document.getElementById('chat-title')) document.getElementById('chat-title').innerText = state.friend.name;
+                    
+                    // 数据迁移与修复逻辑，确保老数据兼容新分组系统
+                    if (!state.cardGroups) state.cardGroups = ['未分组'];
+                    if (!state.cardGroups.includes('未分组')) state.cardGroups.unshift('未分组');
+                    if (!state.hiddenGroups) state.hiddenGroups = [];
+                    if (state.mainCards) {
+                        state.mainCards.forEach((card, i) => {
+                            if (!card.id) card.id = 'tc_old_' + i + '_' + Date.now();
+                            if (!card.group) card.group = '未分组';
+                        });
                     }
                 }
             } catch (err) { console.error("Load failed:", err); }
@@ -765,7 +756,6 @@
         function showNotification(title, body) {
             if (state.settings.push && ("Notification" in window) && Notification.permission === "granted" && document.hidden) {
                 const cleanBody = body.replace(/<br>/g, ' ').substring(0, 50);
-
                 try {
                     new Notification(title, { body: cleanBody, icon: state.friend.avatar || '' });
                 } catch (e) {
@@ -783,7 +773,6 @@
             const el = document.getElementById(pageId);
             el.classList.add('page-active');
             if(pageId === 'page-settings' || pageId === 'page-comm-settings') syncSettingsUI();
-            if(pageId === 'page-word-cards') renderList();
             if(pageId === 'page-destiny') resetDestiny();
         }
 
@@ -1124,7 +1113,6 @@
             callWidget.classList.toggle('mini');
         }
 
-        // --- 性能优化后的拖拽逻辑 ---
         let isDragging = false;
         let hasMoved = false;
         let dragStartX, dragStartY, initialX, initialY;
@@ -1150,10 +1138,8 @@
             callWidget.style.left = initialX + 'px';
             callWidget.style.top = initialY + 'px';
 
-            // 性能优化：拖拽时关闭耗性能的毛玻璃特效，开启纯色背景
             callWidget.classList.add('dragging');
 
-            // 精准监听：只有按下时才绑定移动和松开事件，解决iOS打字卡顿问题
             document.addEventListener('mousemove', onDragMove, {passive: false});
             document.addEventListener('mouseup', onDragEnd);
             document.addEventListener('touchmove', onDragMove, {passive: false});
@@ -1176,7 +1162,6 @@
             if (hasMoved) {
                 e.preventDefault(); 
                 
-                // 性能优化：使用 60FPS 的硬件刷新频率渲染拖动，绝对丝滑
                 if (dragRAF) cancelAnimationFrame(dragRAF);
                 dragRAF = requestAnimationFrame(() => {
                     let newX = initialX + deltaX;
@@ -1204,7 +1189,6 @@
             callWidget.classList.remove('dragging');
             if (dragRAF) cancelAnimationFrame(dragRAF);
 
-            // 精准监听：松手后立刻释放系统资源
             document.removeEventListener('mousemove', onDragMove);
             document.removeEventListener('mouseup', onDragEnd);
             document.removeEventListener('touchmove', onDragMove);
@@ -1214,15 +1198,14 @@
         callWidget.addEventListener('mousedown', onDragStart);
         callWidget.addEventListener('touchstart', onDragStart, {passive: false});
 
-        // --- 聊天输入与发送核心优化逻辑 ---
+        // --- 聊天输入与发送核心 ---
         const messageInput = document.getElementById('message-input');
         const sendBtn = document.getElementById('send-btn');
-        let lastHasVal = false; // 性能优化：按键状态追踪防抖
+        let lastHasVal = false; 
 
         if (messageInput && sendBtn) {
             messageInput.addEventListener('input', () => {
                 const hasVal = messageInput.value.trim().length > 0;
-                // 性能优化：只在输入框从“空”到“有字”或反之时，才去重绘一次按钮，避免打每个字都卡顿
                 if (hasVal !== lastHasVal) {
                     sendBtn.disabled = !hasVal;
                     if (hasVal) {
@@ -1258,7 +1241,7 @@
                 messageInput.value = '';
                 sendBtn.disabled = true; 
                 sendBtn.classList.remove('active');
-                lastHasVal = false; // 发送后重置按键状态追踪
+                lastHasVal = false; 
                 
                 requestReplySet();
             });
@@ -1278,6 +1261,7 @@
             }
 
             const count = Math.floor(Math.random() * 3) + 1;
+            // 核心逻辑：只从启用的（睁眼）字卡和Emoji中抽取
             const pool = [
                 ...state.mainCards.filter(w => w.enabled).map(w => w.text),
                 ...state.emojiState.filter(e => e.enabled).map(e => e.char)
@@ -1351,124 +1335,431 @@
             }
         });
 
-        function switchTab(tab) {
-            state.currentTab = tab;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.id === `tab-${tab}`));
-            document.getElementById('add-word-bar').style.display = (tab === 'custom') ? 'flex' : 'none';
-            renderList();
+
+        // ================= 全新：字卡管理页面核心逻辑 =================
+        function openCardManager() {
+            isBatchMode = false; 
+            isDuplicateMode = false; 
+            isSearchMode = false; 
+            batchSelectedSet.clear();
+            document.getElementById('btn-batch').classList.remove('active');
+            document.getElementById('btn-duplicate').classList.remove('active');
+            document.getElementById('search-bar-wrap').classList.remove('show');
+            document.getElementById('card-search-input').value = '';
+            
+            // 重置视图
+            switchCardTab('custom');
+            navigateTo('page-word-cards');
         }
 
-        function renderList(keyword = "") {
-            const container = document.getElementById('cards-list');
-            container.innerHTML = '';
+        function switchCardTab(tabId) {
+            state.currentTab = tabId;
+            document.querySelectorAll('.card-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.card-tab-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.getElementById('panel-' + tabId).classList.add('active');
+            
+            renderCardGroupsAndList();
+        }
+
+        function toggleSearchBar() {
+            isSearchMode = !isSearchMode;
+            const wrap = document.getElementById('search-bar-wrap');
+            const btn = document.getElementById('btn-search');
+            if (isSearchMode) { 
+                wrap.classList.add('show'); 
+                btn.classList.add('active');
+                document.getElementById('card-search-input').focus(); 
+            } else { 
+                wrap.classList.remove('show'); 
+                btn.classList.remove('active');
+                document.getElementById('card-search-input').value = ''; 
+            }
+            renderCardGroupsAndList();
+        }
+
+        function toggleDuplicateMode() {
+            isDuplicateMode = !isDuplicateMode;
+            const btn = document.getElementById('btn-duplicate');
+            isDuplicateMode ? btn.classList.add('active') : btn.classList.remove('active');
+            renderCardGroupsAndList();
+        }
+
+        function toggleBatchMode() {
+            isBatchMode = !isBatchMode;
+            const bottomBar = document.getElementById('card-bottom-bar');
+            const listWrap = document.getElementById('card-list-container');
+            const btn = document.getElementById('btn-batch');
+            batchSelectedSet.clear();
+
+            if (isBatchMode) {
+                btn.classList.add('active'); 
+                bottomBar.classList.add('batch-mode-on');
+                listWrap.classList.add('batch-mode');
+            } else {
+                btn.classList.remove('active'); 
+                bottomBar.classList.remove('batch-mode-on');
+                listWrap.classList.remove('batch-mode');
+            }
+            renderCardGroupsAndList();
+        }
+
+        // 渲染主列表与分组胶囊
+        function renderCardGroupsAndList() {
+            if (state.currentTab === 'emoji') {
+                renderEmojiGrid();
+                return;
+            }
+
+            const filterContainer = document.getElementById('group-filter-container');
+            const selectContainer = document.getElementById('new-card-group-select');
+            
+            // 1. 统计各分组数量
+            filterContainer.innerHTML = ''; selectContainer.innerHTML = '';
+            const counts = { '全部': state.mainCards.length, '未分组': 0 };
+            state.cardGroups.forEach(g => counts[g] = 0);
+            state.mainCards.forEach(c => { 
+                if(!c.group) c.group = '未分组';
+                if(counts[c.group] !== undefined) counts[c.group]++; 
+                else counts['未分组']++; 
+            });
+
+            // 2. 渲染顶部药丸筛选器
+            filterContainer.innerHTML += `<div class="group-pill ${activeCardFilterGroup === '全部' ? 'active' : ''}" onclick="setCardFilter('全部')">全部 <span class="group-count">${counts['全部']}</span></div>`;
+            filterContainer.innerHTML += `<div class="group-pill ${activeCardFilterGroup === '未分组' ? 'active' : ''}" onclick="setCardFilter('未分组')">未分组 <span class="group-count">${counts['未分组']}</span></div>`;
+            
+            state.cardGroups.forEach(group => {
+                if(group !== '未分组' && !state.hiddenGroups.includes(group)) {
+                    filterContainer.innerHTML += `<div class="group-pill ${activeCardFilterGroup === group ? 'active' : ''}" onclick="setCardFilter('${group}')">${group} <span class="group-count">${counts[group]}</span></div>`;
+                }
+            });
+
+            // 3. 渲染底部新增下拉框
+            selectContainer.innerHTML += `<option value="未分组">未分组</option>`;
+            state.cardGroups.forEach(g => {
+                if (g !== '未分组') selectContainer.innerHTML += `<option value="${g}">${g}</option>`;
+            });
+            // 智能选中当前查看的分组
+            if (state.cardGroups.includes(activeCardFilterGroup)) {
+                selectContainer.value = activeCardFilterGroup;
+            }
+
+            // 4. 数据过滤逻辑
+            let displayIndices = [];
+            
+            // 预处理查重逻辑，找出重复文本
+            let duplicateTexts = new Set();
+            if (isDuplicateMode) {
+                const textCounts = {};
+                state.mainCards.forEach(c => textCounts[c.text] = (textCounts[c.text] || 0) + 1);
+                for (let text in textCounts) if (textCounts[text] > 1) duplicateTexts.add(text);
+            }
+
+            const keyword = document.getElementById('card-search-input').value.trim().toLowerCase();
+
+            state.mainCards.forEach((item, index) => {
+                if (activeCardFilterGroup !== '全部' && item.group !== activeCardFilterGroup) return;
+                if (keyword && !item.text.toLowerCase().includes(keyword)) return;
+                if (isDuplicateMode && !duplicateTexts.has(item.text)) return;
+                displayIndices.push(index);
+            });
+
+            // 5. 渲染字卡 DOM
+            const listContainer = document.getElementById('card-list-container');
+            listContainer.innerHTML = '';
             
             if (sortableInstance) {
                 sortableInstance.destroy();
                 sortableInstance = null;
             }
 
-            if (state.currentTab === 'custom') {
-                const filteredCards = state.mainCards.filter(item => {
-                    return keyword === "" || item.text.startsWith(keyword);
+            if (displayIndices.length === 0) {
+                listContainer.innerHTML = '';
+                return;
+            }
+
+            displayIndices.forEach(originalIndex => {
+                const card = state.mainCards[originalIndex];
+                const eyeIcon = card.enabled ? 'fa-eye' : 'fa-eye-slash';
+                const eyeColor = card.enabled ? 'active' : '';
+                const hiddenClass = card.enabled ? '' : 'hidden-card';
+                const isSelected = batchSelectedSet.has(originalIndex);
+                const selectedClass = isSelected ? 'batch-selected' : '';
+                
+                const clickAction = isBatchMode ? `onclick="toggleBatchSelect(${originalIndex})"` : '';
+
+                listContainer.innerHTML += `
+                    <div class="text-card-item ${hiddenClass} ${selectedClass}" ${clickAction} data-index="${originalIndex}">
+                        <div class="batch-checkbox"><i class="fa-solid fa-check" style="font-size: 12px; ${isSelected ? 'display:block' : 'display:none'}"></i></div>
+                        <div class="text-card-content">${card.text}</div>
+                        <div class="text-card-actions">
+                            <div class="card-group-tag"><i class="fa-regular fa-folder" style="font-size:11px;"></i> ${card.group}</div>
+                            <div class="card-action-icons">
+                                <div class="card-icon-btn" onclick="editCard(${originalIndex}); event.stopPropagation();"><i class="fa-solid fa-pen-to-square"></i></div>
+                                <div class="card-icon-btn" onclick="changeCardGroup(${originalIndex}); event.stopPropagation();"><i class="fa-solid fa-folder-open"></i></div>
+                                <div class="card-icon-btn ${eyeColor}" onclick="toggleCardVis(${originalIndex}); event.stopPropagation();"><i class="fa-solid ${eyeIcon}"></i></div>
+                                <div class="card-icon-btn delete" onclick="deleteCard(${originalIndex}); event.stopPropagation();"><i class="fa-regular fa-trash-can"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // 仅在无筛选的全部状态且非批量模式下允许拖拽排序
+            if (!isBatchMode && !isSearchMode && !isDuplicateMode && activeCardFilterGroup === '全部' && keyword === "") {
+                sortableInstance = new Sortable(listContainer, {
+                    animation: 150,
+                    delay: 200,
+                    delayOnTouchOnly: true,
+                    touchStartThreshold: 5,
+                    onEnd: function (evt) {
+                        const oldIndex = evt.oldIndex;
+                        const newIndex = evt.newIndex;
+                        if (oldIndex === newIndex) return;
+                        const movedItem = state.mainCards.splice(oldIndex, 1)[0];
+                        state.mainCards.splice(newIndex, 0, movedItem);
+                        saveStateToStorage();
+                        renderCardGroupsAndList();
+                    }
                 });
-
-                filteredCards.forEach((item) => {
-                const originalIndex = state.mainCards.indexOf(item);
-
-                const card = document.createElement('div');
-                card.className = `card-item ${item.enabled ? '' : 'disabled'}`;
-                card.setAttribute('data-index', originalIndex);
-                 card.innerHTML = `
-                     <div class="card-text">${item.text}</div>
-                     <div class="card-actions">
-                         <i class="fa-solid fa-pen-to-square card-icon edit" onclick="editWord(${originalIndex})"></i>
-                         <i class="fa-solid ${item.enabled ? 'fa-eye active' : 'fa-eye-slash'} card-icon" onclick="toggleWordStatus(${originalIndex})"></i>
-                         <i class="fa-solid fa-trash-can card-icon delete" onclick="deleteWord(${originalIndex})"></i>
-                     </div>
-                    `;
-                    container.appendChild(card);
-                });
-
-                    if (keyword === "") {
-                    sortableInstance = new Sortable(container, {
-                        animation: 150,
-                        delay: 200,
-                        delayOnTouchOnly: true,
-                        touchStartThreshold: 5,
-                        onEnd: function (evt) {
-                            const oldIndex = evt.oldIndex;
-                            const newIndex = evt.newIndex;
-                            if (oldIndex === newIndex) return;
-                            const movedItem = state.mainCards.splice(oldIndex, 1)[0];
-                            state.mainCards.splice(newIndex, 0, movedItem);
-                            saveStateToStorage();
-                            renderList();
-                        }
-                    });
-                }
-
-            } else if (state.currentTab === 'emoji') {
-                const grid = document.createElement('div');
-                grid.className = 'emoji-grid';
-                state.emojiState.forEach((item, index) => {
-                    const box = document.createElement('div');
-                    box.className = `emoji-box ${item.enabled ? '' : 'disabled'}`;
-                    box.innerHTML = `${item.char}<i class="fa-solid ${item.enabled ? 'fa-eye' : 'fa-eye-slash'} emoji-eye-status"></i>`;
-                    box.onclick = () => toggleEmoji(index);
-                    grid.appendChild(box);
-                });
-                container.appendChild(grid);
             }
         }
 
-        function saveNewWord() {
-            const input = document.getElementById('new-word-input');
-            const val = input.value.trim();
-            if (!val) return;
-            state.mainCards.unshift({ text: val, enabled: true });
-            input.value = '';
-            checkInputReady();
-            saveStateToStorage();
-            renderList();
+        function setCardFilter(groupName) { 
+            activeCardFilterGroup = groupName; 
+            renderCardGroupsAndList(); 
         }
-
-        function editWord(index) {
-            const oldText = state.mainCards[index].text;
-            const newText = prompt("编辑字卡内容：", oldText);
-            if (newText !== null && newText.trim() !== "") {
-                state.mainCards[index].text = newText.trim();
-                saveStateToStorage();
-                renderList();
-            }
-        }
-
-        function toggleWordStatus(index) {
-            state.mainCards[index].enabled = !state.mainCards[index].enabled;
-            saveStateToStorage();
-            renderList();
-        }
-
-        function deleteWord(index) {
-            if (confirm("确定要删除这条字卡吗？")) {
-                state.mainCards.splice(index, 1);
-                saveStateToStorage();
-                renderList();
-            }
-        }
-
-        function toggleEmoji(i) { 
-            state.emojiState[i].enabled = !state.emojiState[i].enabled; 
+        
+        function toggleCardVis(index) { 
+            state.mainCards[index].enabled = !state.mainCards[index].enabled; 
             saveStateToStorage(); 
-            renderList(); 
+            renderCardGroupsAndList(); 
+        }
+        
+        function deleteCard(index) { 
+            if(confirm('确定要删除这条字卡吗？')) { 
+                state.mainCards.splice(index, 1);
+                saveStateToStorage(); 
+                renderCardGroupsAndList(); 
+            } 
+        }
+        
+        function editCard(index) { 
+            const newText = prompt("编辑字卡内容：", state.mainCards[index].text); 
+            if (newText !== null && newText.trim() !== '') { 
+                state.mainCards[index].text = newText.trim(); 
+                saveStateToStorage(); 
+                renderCardGroupsAndList(); 
+            } 
         }
 
-        function checkInputReady() {
+        function changeCardGroup(index) {
+            const groupStr = state.cardGroups.join(' / ');
+            const newGroup = prompt(`输入目标分组 (${groupStr})：\n(输入新名字将自动创建)`, state.mainCards[index].group);
+            if (newGroup !== null && newGroup.trim() !== '') {
+                const g = newGroup.trim();
+                if (!state.cardGroups.includes(g)) state.cardGroups.push(g);
+                state.mainCards[index].group = g; 
+                saveStateToStorage(); 
+                renderCardGroupsAndList();
+            }
+        }
+
+        function addNewCard() {
             const inputEl = document.getElementById('new-word-input');
-            const val = inputEl.value.trim();
-            document.getElementById('btn-add').classList.toggle('ready', val.length > 0);
-            renderList(val);
+            const selectEl = document.getElementById('new-card-group-select');
+            const text = inputEl.value.trim();
+            if (!text) return;
+            // id 生成兼容以前结构
+            state.mainCards.unshift({ id: 'tc_' + Date.now(), text: text, group: selectEl.value || '未分组', enabled: true });
+            inputEl.value = ''; 
+            saveStateToStorage(); 
+            // 自动跳转到新添加的分组方便查看
+            if (activeCardFilterGroup !== '全部' && activeCardFilterGroup !== selectEl.value) {
+                activeCardFilterGroup = selectEl.value;
+            }
+            renderCardGroupsAndList();
         }
 
+        // --- 批量管理逻辑 ---
+        function toggleBatchSelect(index) { 
+            if(batchSelectedSet.has(index)) batchSelectedSet.delete(index); 
+            else batchSelectedSet.add(index); 
+            renderCardGroupsAndList(); 
+        }
+
+        function batchSelectAll() {
+            // 全选当前列表里的可见项
+            const currentItems = document.querySelectorAll('.text-card-item');
+            if (batchSelectedSet.size === currentItems.length) {
+                batchSelectedSet.clear(); // 全不选
+            } else {
+                currentItems.forEach(el => batchSelectedSet.add(parseInt(el.getAttribute('data-index'))));
+            }
+            renderCardGroupsAndList();
+        }
+
+        function batchToggleVisibility() { 
+            if(batchSelectedSet.size === 0) return alert("请先选择字卡"); 
+            batchSelectedSet.forEach(idx => {
+                state.mainCards[idx].enabled = !state.mainCards[idx].enabled;
+            });
+            saveStateToStorage(); 
+            batchSelectedSet.clear(); 
+            toggleBatchMode(); 
+        }
+
+        function batchDeleteCards() { 
+            if(batchSelectedSet.size === 0) return alert("请先选择字卡"); 
+            if(confirm(`确定删除这 ${batchSelectedSet.size} 张字卡吗？`)) { 
+                // 倒序删除防止索引错位
+                const indices = Array.from(batchSelectedSet).sort((a,b) => b-a);
+                indices.forEach(idx => state.mainCards.splice(idx, 1));
+                saveStateToStorage(); 
+                batchSelectedSet.clear(); 
+                toggleBatchMode(); 
+            } 
+        }
+
+        function batchChangeGroup() {
+            if(batchSelectedSet.size === 0) return alert("请先选择字卡");
+            const groupStr = state.cardGroups.join(' / ');
+            const newGroup = prompt(`批量移动至分组 (${groupStr})：\n(输入新名字自动创建)`);
+            if (newGroup !== null && newGroup.trim() !== '') {
+                const g = newGroup.trim();
+                if (!state.cardGroups.includes(g)) state.cardGroups.push(g);
+                batchSelectedSet.forEach(idx => state.mainCards[idx].group = g);
+                saveStateToStorage(); 
+                batchSelectedSet.clear(); 
+                toggleBatchMode();
+            }
+        }
+
+        // === 导入导出 ===
+        function exportCards() { 
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.mainCards, null, 2)); 
+            const dlAnchorElem = document.createElement('a'); 
+            dlAnchorElem.setAttribute("href", dataStr); 
+            dlAnchorElem.setAttribute("download", "dreamline_cards.json"); 
+            dlAnchorElem.click(); 
+        }
+        
+        function importCardsJson(input) {
+            // 通用导入逻辑见上方
+        }
+
+        // === 全新：分组管理 Modal (复刻 UI 图 1 & 2) ===
+        function openGroupManagerModal() {
+            const container = document.getElementById('modal-group-list'); 
+            container.innerHTML = '';
+            
+            // 过滤掉系统内置的“未分组”
+            const customGroups = state.cardGroups.filter(g => g !== '未分组');
+            
+            if (customGroups.length === 0) {
+                // 图1：暂无自定义分组
+                container.innerHTML = `<div style="text-align:center; color:#999; padding:30px 0 20px 0; font-size:15px;">暂无自定义分组</div>`;
+            } else {
+                // 图2：展示自定义分组列表
+                customGroups.forEach(group => {
+                    const isHidden = state.hiddenGroups.includes(group);
+                    const eyeIcon = isHidden ? 'fa-eye-slash' : 'fa-eye'; 
+                    const hiddenClass = isHidden ? 'hidden-state' : '';
+                    
+                    container.innerHTML += `
+                        <div class="group-manager-item ${hiddenClass}">
+                            <div class="group-manager-name">${group}</div>
+                            <div class="group-manager-actions">
+                                <i class="fa-solid fa-pen" style="cursor:pointer;" onclick="renameGroup('${group}')"></i>
+                                <i class="fa-solid ${eyeIcon}" style="cursor:pointer;" onclick="toggleGroupVisibilityInManager('${group}')"></i>
+                                <i class="fa-regular fa-trash-can" style="cursor:pointer; color:var(--danger-color);" onclick="deleteGroup('${group}')"></i>
+                            </div>
+                        </div>`;
+                });
+            }
+            
+            // 将 “+ 新增分组” 按钮紧跟在列表底部
+            container.innerHTML += `<button class="btn-add-group" onclick="addNewCustomGroup()">+ 新增分组</button>`;
+            
+            document.getElementById('custom-modal-overlay').classList.add('show');
+            document.getElementById('custom-modal-overlay').style.display = 'flex';
+        }
+
+        function closeCustomModal() { 
+            document.getElementById('custom-modal-overlay').classList.remove('show'); 
+            document.getElementById('custom-modal-overlay').style.display = 'none';
+            renderCardGroupsAndList(); 
+        }
+
+        function addNewCustomGroup() { 
+            const name = prompt("输入新分组名称："); 
+            if(name && name.trim() && name.trim() !== '未分组' && !state.cardGroups.includes(name.trim())) { 
+                state.cardGroups.push(name.trim()); 
+                saveStateToStorage(); 
+                openGroupManagerModal(); 
+            } 
+        }
+
+        function renameGroup(oldName) {
+            const newName = prompt(`重命名分组【${oldName}】：`, oldName);
+            if(newName && newName.trim() && newName.trim() !== oldName && !state.cardGroups.includes(newName.trim())) {
+                const finalName = newName.trim(); 
+                state.cardGroups[state.cardGroups.indexOf(oldName)] = finalName;
+                if(state.hiddenGroups.includes(oldName)) { 
+                    state.hiddenGroups[state.hiddenGroups.indexOf(oldName)] = finalName; 
+                }
+                state.mainCards.forEach(c => { if(c.group === oldName) c.group = finalName; }); 
+                if (activeCardFilterGroup === oldName) activeCardFilterGroup = finalName;
+                saveStateToStorage(); 
+                openGroupManagerModal();
+            }
+        }
+
+        function toggleGroupVisibilityInManager(group) {
+            if(state.hiddenGroups.includes(group)) { 
+                state.hiddenGroups = state.hiddenGroups.filter(g => g !== group); 
+            } else { 
+                state.hiddenGroups.push(group); 
+                if(activeCardFilterGroup === group) activeCardFilterGroup = '全部'; 
+            }
+            saveStateToStorage(); 
+            openGroupManagerModal();
+        }
+
+        function deleteGroup(group) {
+            if(confirm(`删除分组【${group}】？\n该分组下的所有字卡将被自动移入「未分组」。`)) {
+                state.cardGroups = state.cardGroups.filter(g => g !== group); 
+                state.hiddenGroups = state.hiddenGroups.filter(g => g !== group);
+                state.mainCards.forEach(c => { if(c.group === group) c.group = '未分组'; }); 
+                if(activeCardFilterGroup === group) activeCardFilterGroup = '全部';
+                saveStateToStorage(); 
+                openGroupManagerModal();
+            }
+        }
+
+        // === Emoji 面板逻辑 ===
+        function renderEmojiGrid() { 
+            const container = document.getElementById('emoji-grid-container'); 
+            container.innerHTML = ''; 
+            state.emojiState.forEach((item, index) => { 
+                const eyeIcon = item.enabled ? 'fa-eye' : 'fa-eye-slash'; 
+                const hiddenClass = item.enabled ? '' : 'hidden-emoji'; 
+                container.innerHTML += `
+                <div class="emoji-item ${hiddenClass}" onclick="toggleEmojiVis(${index})">
+                    ${item.char}
+                    <i class="fa-solid ${eyeIcon} emoji-eye-icon"></i>
+                </div>`; 
+            }); 
+        }
+
+        function toggleEmojiVis(index) { 
+            state.emojiState[index].enabled = !state.emojiState[index].enabled; 
+            saveStateToStorage(); 
+            renderEmojiGrid(); 
+        }
+
+
+        // --- 通用设置逻辑 ---
         function toggleSwitch(key) {
             state.settings[key] = !state.settings[key];
             if (key === 'push' && state.settings.push) {
@@ -1624,8 +1915,6 @@
             overlay.classList.add('active');
         }
 
-        function closeModal() { document.getElementById('modal-overlay').classList.remove('active'); }
-
         window.onload = async () => {
             await loadStateFromStorage();
             syncSettingsUI();
@@ -1647,7 +1936,6 @@
             }
             
             applyChatBackground();
-
             scheduleRandomCall();
 
             setInterval(() => {
