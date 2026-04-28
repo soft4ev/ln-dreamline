@@ -314,7 +314,8 @@
        请在这里粘贴你原本 <body> 标签内的所有 HTML 元素 (如 <div id="app">, <header> 等) 
     -->
 
-    <div id="app">    <!-- 聊天主页面 -->
+    <div id="app"> 
+    <!-- 聊天主页面 -->
     <div id="page-chat" class="page-container page-active">
         <header>
             <img src="assets/images/message-tittle.png" alt="Message" class="header-bg-title" onerror="this.style.display='none'">
@@ -565,7 +566,7 @@
     <input type="file" id="bg-upload-input" style="display:none" accept="image/*">
 
     <script>
-        const STORAGE_KEY = 'dreamline_state_v6.5'; 
+        const STORAGE_KEY = 'dreamline_state_v6.5'; // 升级存储版本
         
         const DEFAULT_SETTINGS = { push: false, videoCall: true, sound: true, quote: true, typing: true, ignore: false, auto: false, minSpeed: 2, maxSpeed: 6, autoInterval: 5, chatBackground: null };
 
@@ -702,16 +703,11 @@
         };
 
         function exportCards() {
-            const dataStr = JSON.stringify(state.mainCards, null, 2);
-            const blob = new Blob([dataStr], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = "maincards.json";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.mainCards, null, 2)); 
+            const dlAnchorElem = document.createElement('a'); 
+            dlAnchorElem.setAttribute("href", dataStr); 
+            dlAnchorElem.setAttribute("download", "maincards.json"); 
+            dlAnchorElem.click(); 
         }
 
         document.getElementById('json-upload-input').onchange = (e) => {
@@ -727,13 +723,37 @@
                         else if (data.data && Array.isArray(data.data)) data = data.data;
                     }
                     if (Array.isArray(data)) {
-                        showModal('导入字卡', `成功读取到 ${data.length} 条字卡。确定要覆盖当前的所有字卡吗？`, false, '', () => {
-                            state.mainCards = data;
-                            saveStateToStorage();
-                            if (state.currentTab === 'custom') {
-                                renderList();
+                        showModal('导入字卡', `成功读取到 ${data.length} 条字卡。确定要导入并新增这些字卡吗？`, false, '', () => {
+                            try {
+                                // 修复：自动提取并兼容 JSON 中的分组及缺失的 id
+                                data.forEach((c, idx) => {
+                                    if (!c.id) c.id = 'tc_import_' + Date.now() + '_' + idx;
+                                    if (!c.group) c.group = '未分组';
+                                    if (c.enabled === undefined) c.enabled = true;
+                                });
+                                
+                                // 合并字卡（将新字卡加在前面）
+                                state.mainCards = [...data, ...state.mainCards];
+                                
+                                // 合并并去重分组
+                                const newGroups = new Set(state.cardGroups);
+                                data.forEach(c => newGroups.add(c.group));
+                                state.cardGroups = Array.from(newGroups);
+                                if (!state.cardGroups.includes('未分组')) {
+                                    state.cardGroups.unshift('未分组');
+                                }
+                                
+                                saveStateToStorage();
+                                if (state.currentTab === 'custom') {
+                                    renderCardGroupsAndList(); 
+                                } else if (state.currentTab === 'emoji') {
+                                    renderEmojiGrid();
+                                }
+                                closeModal();
+                            } catch(e) {
+                                console.error("导入执行出错", e);
+                                closeModal(); // 防止卡死
                             }
-                            closeModal();
                         });
                     } else {
                         showModal('导入失败', 'JSON格式不正确，必须是一个包含字卡的数组。请确保文件最外层是 [ ]。', false, '', () => closeModal());
@@ -773,6 +793,11 @@
             const el = document.getElementById(pageId);
             el.classList.add('page-active');
             if(pageId === 'page-settings' || pageId === 'page-comm-settings') syncSettingsUI();
+            if(pageId === 'page-word-cards') {
+                // 修复：页面跳转时调用正确的渲染函数
+                if (state.currentTab === 'emoji') renderEmojiGrid();
+                else renderCardGroupsAndList();
+            }
             if(pageId === 'page-destiny') resetDestiny();
         }
 
@@ -1505,19 +1530,29 @@
                 `;
             });
 
-            // 仅在无筛选的全部状态且非批量模式下允许拖拽排序
-            if (!isBatchMode && !isSearchMode && !isDuplicateMode && activeCardFilterGroup === '全部' && keyword === "") {
+            // 仅在具体分组（非「全部」）且非特殊模式下允许拖拽排序
+            if (!isBatchMode && !isSearchMode && !isDuplicateMode && activeCardFilterGroup !== '全部' && keyword === "") {
                 sortableInstance = new Sortable(listContainer, {
                     animation: 150,
-                    delay: 200,
+                    delay: 300, // 长按 0.3 秒触发拖拽
                     delayOnTouchOnly: true,
-                    touchStartThreshold: 5,
+                    touchStartThreshold: 10, // 滑动超过 10px 取消长按判定，彻底修复手机端无法上下滚动的问题
                     onEnd: function (evt) {
                         const oldIndex = evt.oldIndex;
                         const newIndex = evt.newIndex;
                         if (oldIndex === newIndex) return;
-                        const movedItem = state.mainCards.splice(oldIndex, 1)[0];
-                        state.mainCards.splice(newIndex, 0, movedItem);
+                        
+                        // 核心：在原数组中，仅针对当前过滤出的位置进行元素对调，不影响其他分组的数据顺序
+                        let slots = [...displayIndices];
+                        let groupCards = slots.map(i => state.mainCards[i]);
+                        
+                        const [movedItem] = groupCards.splice(oldIndex, 1);
+                        groupCards.splice(newIndex, 0, movedItem);
+                        
+                        slots.forEach((originalIdx, i) => {
+                            state.mainCards[originalIdx] = groupCards[i];
+                        });
+                        
                         saveStateToStorage();
                         renderCardGroupsAndList();
                     }
@@ -1758,6 +1793,13 @@
             renderEmojiGrid(); 
         }
 
+        function checkInputReady() {
+            const inputEl = document.getElementById('new-word-input');
+            const val = inputEl.value.trim();
+            const btnAdd = document.getElementById('btn-add');
+            // 修复：移除旧的渲染函数调用，打字时仅激活按钮即可
+            if (btnAdd) btnAdd.classList.toggle('ready', val.length > 0);
+        }
 
         // --- 通用设置逻辑 ---
         function toggleSwitch(key) {
