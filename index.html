@@ -85,7 +85,9 @@
         .header-left { justify-content: flex-start; }
         .header-right { justify-content: flex-end; gap: 16px; }
         
-        .header-name { position: absolute; left: 50%; top: calc(50% + (var(--safe-area-top) / 2)); transform: translate(-50%, -50%); font-size: 17px; font-weight: 500; color: var(--header-text); text-align: center; z-index: 1; white-space: nowrap; pointer-events: none; }
+        /* 强制标题绝对居中，加入 flex 对齐以兼容旁边的静音图标 */
+        .header-name { position: absolute; left: 50%; top: calc(50% + (var(--safe-area-top) / 2)); transform: translate(-50%, -50%); font-size: 17px; font-weight: 500; color: var(--header-text); display: flex; align-items: center; justify-content: center; z-index: 1; white-space: nowrap; pointer-events: none; }
+        .chat-mute-icon { font-size: 13px; color: #c5c5c5; margin-left: 6px; display: none; }
         .back-btn { font-size: 32px; color: #888; cursor: pointer; padding: 0 5px; line-height: 1; }
         
         .header-icon { font-size: 20px; color: var(--brand-pink); cursor: pointer; transition: transform 0.15s; display: flex; align-items: center; justify-content: center; }
@@ -325,7 +327,10 @@
         <header>
             <img src="assets/images/message-tittle.png" alt="Message" class="header-bg-title" onerror="this.style.display='none'">
             <div class="header-left"></div>
-            <div class="header-name" id="chat-title">Dream</div>
+            <div class="header-name">
+                <span id="chat-title">Dream</span>
+                <i class="fa-solid fa-bell-slash chat-mute-icon" id="chat-mute-icon"></i>
+            </div>
             <div class="header-right">
                 <i class="fa-solid fa-video header-icon" id="btn-video-call"></i>
                 <div class="header-more" onclick="navigateTo('page-settings')"><span></span><span></span><span></span></div>
@@ -1860,6 +1865,12 @@
             if (btnVideoCall) {
                 btnVideoCall.style.display = state.settings.videoCall ? 'flex' : 'none';
             }
+
+            // 新增：消息免打扰（已读不回）的顶部图标联动
+            const muteIcon = document.getElementById('chat-mute-icon');
+            if (muteIcon) {
+                muteIcon.style.display = state.settings.ignore ? 'inline-block' : 'none';
+            }
         }
 
         function openNicknameEdit(target) {
@@ -1999,19 +2010,6 @@
                 }
             }, 1000);
         };
-    </script>
-
-    <!-- ==========================================
-         PWA 核心文件嵌入区 (请勿修改此处 script 标签格式)
-         ========================================== -->
-
-    <!-- 嵌入 Manifest 文件 -->
-    
-
-    <!-- 嵌入 Service Worker 文件 -->
-    
-
-    <!-- PWA 自动注册逻辑 -->
     <script>
         /**
          * 注意：虽然我们将代码嵌入在 script 中，
